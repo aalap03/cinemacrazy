@@ -32,10 +32,10 @@ data class VideoResult(
 data class Image(
     @SerializedName("file_path")
     @Expose
-    var site: String = ""
+    var filePath: String = ""
 ) : MovieMedia {
     override fun getLinkKey(): String {
-        return site
+        return filePath
     }
 
     override fun mediaType(): String {

@@ -11,6 +11,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.cinemacrazy.R
 import com.example.cinemacrazy.datamodel.*
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.content.Context
+import android.net.Uri
+
 
 class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : DiffUtil.ItemCallback<MovieMedia>() {
 
@@ -53,7 +58,23 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
                     )
                     .load(media.getLinkKey().YOUTUBE_THUMBNAIL())
                     .into(cardImage)
+
+                cardImage.setOnClickListener { v -> watchYoutubeVideo(v.context, media.getLinkKey()) }
             }
         }
+    }
+
+    fun watchYoutubeVideo(context: Context, id: String) {
+        val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id"))
+        val webIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("http://www.youtube.com/watch?v=$id")
+        )
+        try {
+            context.startActivity(appIntent)
+        } catch (ex: ActivityNotFoundException) {
+            context.startActivity(webIntent)
+        }
+
     }
 }

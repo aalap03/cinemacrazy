@@ -15,6 +15,7 @@ import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import kotlin.collections.ArrayList
+import kotlin.concurrent.thread
 
 class MovieDetailsViewModel : ViewModel(), AnkoLogger {
 
@@ -22,6 +23,8 @@ class MovieDetailsViewModel : ViewModel(), AnkoLogger {
     var compositeDisposable = CompositeDisposable()
     var mutableImageLinks = MutableLiveData<List<Image>>()
     var mutableVideoLinks = MutableLiveData<List<Video>>()
+
+    var movieInfo = MutableLiveData<MovieInfo>()
 
     fun getVideoLinks(movieId: Int, api: TmdbService) {
 
@@ -64,22 +67,83 @@ class MovieDetailsViewModel : ViewModel(), AnkoLogger {
         )
     }
 
-    fun saveMovie(
+    fun getSavedMoviesDetails(
         movieId: Int,
         api: TmdbService,
         database: AppDb
     ) {
-        val movieImages = getImageResult(movieId, api)
-        val movieVideos = getVideoResult(movieId, api)
-        val serverMovieInfo = getServerMovieInfo(movieId, api)
+//        var movie: MovieInfo? = null
+//        thread {
+//            movie = database.moviesDao().getMovie(movieId)
 
-        Flowable.zip(movieImages, movieVideos, serverMovieInfo, Function3<ImagesServerResult, VideosServerResult, MovieServerResult, MovieInfo> { movieImage, movieVideo, movieInfo ->
-            MovieInfo()
-        }).map {
-            database.moviesDao().insertMovie(it)
-        }.map {
-            database.moviesDao().getMovie(movieId)
+//            if (movie != null) {
+//                info { "store Movie" }
+//                movieInfo.postValue(movie)
+//            } else {
+//                info { "storedMovie: $movie" }
+
+                val movieImages = getImageResult(movieId, api)
+                val movieVideos = getVideoResult(movieId, api)
+                val serverMovieInfo = getServerMovieInfo(movieId, api)
+
+                Flowable.zip(
+                    movieImages,
+                    movieVideos,
+                    serverMovieInfo,
+                    Function3<ImagesServerResult, VideosServerResult, MovieServerResult, MovieInfo> { movieImage, movieVideo, movieInfo ->
+                        getMovieInfo(movieInfo, movieVideo, movieImage, movieId)
+                    })
+                    .map {
+                        database.moviesDao().insertMovie(it)
+                    }.map {
+                        database.moviesDao().getMovie(movieId)
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ t ->
+                        movieInfo.postValue(t)
+                    }, { t ->
+                        info { t.localizedMessage }
+                    })?.let { compositeDisposable.add(it) }
+            //}
+//        }
+    }
+
+    private fun getMovieInfo(
+        movieInfo: MovieServerResult,
+        movieVideo: VideosServerResult,
+        movieImage: ImagesServerResult,
+        movieId: Int
+    ): MovieInfo {
+        val genres: MutableList<MediaGenres> = mutableListOf()
+        val videos: MutableList<VideoPath> = mutableListOf()
+        val images: MutableList<ImagePath> = mutableListOf()
+
+        var homePage = ""
+        var runtime = 0
+
+        if (movieInfo.errorMsg == null) {
+            movieInfo.movie.genres.forEach {
+                genres.add(MediaGenres(it.id, it.name))
+            }
+            homePage = movieInfo.movie.homepage!!
+            runtime = movieInfo.movie.runtime!!
         }
+
+        movieVideo.list.toMutableList().forEach {
+            videos.add(VideoPath(it.key))
+        }
+        movieImage.list.toMutableList().forEach {
+            images.add(ImagePath(it.filePath))
+        }
+
+        return MovieInfo(
+            movieId.toLong(),
+            runTimeMinutes = runtime,
+            homePageLink = homePage,
+            videos = videos,
+            images = images
+        )
     }
 
     private fun getServerMovieInfo(movieId: Int, api: TmdbService): Flowable<MovieServerResult> {

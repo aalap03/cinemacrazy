@@ -44,7 +44,7 @@ class MovieDetailScreen : BaseActivity(), AnkoLogger {
             val movieDetailsViewModel = ViewModelProviders.of(this).get(MovieDetailsViewModel::class.java)
             it.id?.let { id ->
 
-                movieDetailsViewModel.saveMovie(id, api, database)
+                movieDetailsViewModel.getSavedMoviesDetails(id, api, database)
                 movieDetailsViewModel.getImageLinks(movieId = id, api = api)
                 movieDetailsViewModel.getVideoLinks(movieId = id, api = api)
 

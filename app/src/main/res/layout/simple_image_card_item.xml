@@ -18,7 +18,7 @@
                 android:id="@+id/simple_card_image"
                 android:layout_width="match_parent"
                 android:src="@mipmap/ic_launcher_round"
-                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
                 android:layout_height="match_parent"/>
 
     </com.google.android.material.card.MaterialCardView>

@@ -21,7 +21,6 @@
                 android:transitionName="poster"
 
                 android:id="@+id/movie_poster"
-                android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
                 app:layout_constraintBottom_toBottomOf="parent"
 

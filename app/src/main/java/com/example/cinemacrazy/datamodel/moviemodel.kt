@@ -106,10 +106,10 @@ data class Movie(
 data class Genre(
     @SerializedName("name")
     @Expose
-    var releaseDate: String? = null,
+    var name: String = "",
     @SerializedName("id")
     @Expose
-    var runtime: Int? = null
+    var id: Int = 0
 )
 
 

@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.cinemacrazy.datamodel.MovieInfo
+import androidx.room.TypeConverters
+import com.example.cinemacrazy.datamodel.*
 import com.example.cinemacrazy.datamodel.daos.MovieDao
 
-@Database(version = 1, entities = [MovieInfo::class])
+@Database(version = 2, entities = [MovieInfo::class, MediaGenres::class, ImagePath::class, VideoPath::class])
+@TypeConverters(Convertors::class)
 abstract class AppDb: RoomDatabase() {
 
     abstract fun moviesDao(): MovieDao
@@ -28,6 +30,4 @@ abstract class AppDb: RoomDatabase() {
                 .build()
         }
     }
-
-
 }

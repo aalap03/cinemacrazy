@@ -13,5 +13,5 @@ interface MovieDao {
     fun insertMovie(movieInfo: MovieInfo)
 
     @Query("SELECT * FROM movie_info WHERE id = :movieId")
-    fun getMovie(movieId: Int): MovieInfo
+    fun getMovie(movieId: Int): MovieInfo?
 }
