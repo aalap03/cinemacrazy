@@ -64,7 +64,7 @@ data class TrendingMovie(
     var popularity: Double? = null
 ) : Parcelable
 
-data class MovieInfo(
+data class Movie(
     @SerializedName("backdrop_path")
     @Expose
     var backdropPath: String? = null,
@@ -112,5 +112,12 @@ data class Genre(
     var runtime: Int? = null
 )
 
-val TMDB_IMAGE_PATH = "https://image.tmdb.org/t/p/original/"
-val YOUTUBE_VIDEO_PATH = "https://www.youtube.com/watch?v="
+
+fun String.YOUTUBE_VIDEO_PATH() = "https://www.youtube.com/watch?v=$this"
+fun String.TMDB_IMAGE_PATH(): String = "https://image.tmdb.org/t/p/original/$this"
+
+fun String.YOUTUBE_THUMBNAIL(): String =
+    "https://img.youtube.com/vi/" +
+            this.replace(".jpg", "").replace(".png", "").replace("/", "") +
+            "/0.jpg"
+

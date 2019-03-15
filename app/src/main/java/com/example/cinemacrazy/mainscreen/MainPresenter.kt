@@ -9,11 +9,11 @@ class MainPresenter @Inject constructor(var view: IMainActivity, var movieReposi
 
     var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    fun requestMovies() {
+    fun requestMovies(pageNum: Long) {
         view.showLoaging()
 
         compositeDisposable.add(
-            movieRepository.getTrendingMovies()
+            movieRepository.getTrendingMovies(pageNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ t ->

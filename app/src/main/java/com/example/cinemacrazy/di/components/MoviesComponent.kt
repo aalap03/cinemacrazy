@@ -1,6 +1,8 @@
 package com.example.cinemacrazy.di.components
 
+import com.example.cinemacrazy.BaseActivity
 import com.example.cinemacrazy.apiservice.TmdbService
+import com.example.cinemacrazy.application.AppDb
 import com.example.cinemacrazy.di.modules.NetworkModule
 import com.example.cinemacrazy.mainscreen.MainActivity
 import dagger.Component
@@ -12,5 +14,7 @@ interface MoviesComponent {
 
     fun tmdbService(): TmdbService
 
-    fun inject(mainActivity: MainActivity)
+    fun database(): AppDb
+
+    fun inject(mainActivity: BaseActivity)
 }

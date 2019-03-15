@@ -5,5 +5,5 @@ import io.reactivex.Flowable
 
 interface Repository {
 
-    fun getTrendingMovies(): Flowable<ArrayList<TrendingMovie>?>
+    fun getTrendingMovies(pageNum: Long): Flowable<ArrayList<TrendingMovie>?>
 }

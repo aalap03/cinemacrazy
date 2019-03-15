@@ -18,6 +18,8 @@
                 android:layout_width="150dp"
                 android:layout_height="180dp"
                 android:src="@mipmap/ic_launcher"
+                android:transitionName="poster"
+
                 android:id="@+id/movie_poster"
                 android:scaleType="centerCrop"
                 android:adjustViewBounds="true"
