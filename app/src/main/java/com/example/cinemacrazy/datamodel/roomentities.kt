@@ -12,11 +12,11 @@ data class MovieInfo(
 
     var runTimeMinutes: Int = 0,
 
-    var homePageLink: String? = null,
+    var homePageLink: String? = null
 
-    var genres: ArrayList<String> = arrayListOf(),
+//    var genres: ArrayList<String> = arrayListOf(),
 
-    var videos: ArrayList<String> = arrayListOf(),
-
-    var images: ArrayList<String> = arrayListOf()
+//    var videos: ArrayList<String> = arrayListOf(),
+//
+//    var images: ArrayList<String> = arrayListOf()
 )

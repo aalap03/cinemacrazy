@@ -52,7 +52,7 @@ class MoviesAdapter: PagedListAdapter<TrendingMovie, MoviesAdapter.MovieHolder>(
             info{"Item: $item"}
 
             Glide.with(itemView.context)
-                .load(item?.backdropPath?.TMDB_IMAGE_PATH())
+                .load(item?.posterPath?.TMDB_IMAGE_PATH())
                 .into(moviePoster)
 
             itemView.setOnClickListener {
