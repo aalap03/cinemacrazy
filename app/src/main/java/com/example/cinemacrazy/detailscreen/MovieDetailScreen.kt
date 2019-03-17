@@ -14,9 +14,9 @@ import com.example.cinemacrazy.datamodel.Image
 import com.example.cinemacrazy.datamodel.TMDB_IMAGE_PATH
 import com.example.cinemacrazy.datamodel.TrendingMovie
 import com.example.cinemacrazy.datamodel.Video
-import com.example.cinemacrazy.mainscreen.MOVIE_DETAIL
+import com.example.cinemacrazy.media.MOVIE_DETAIL
 import com.google.android.material.appbar.CollapsingToolbarLayout
-import kotlinx.android.synthetic.main.movie_detail_screen.*
+import kotlinx.android.synthetic.main.media_detail_screen.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
@@ -44,9 +44,9 @@ class MovieDetailScreen : BaseActivity(), AnkoLogger {
             val movieDetailsViewModel = ViewModelProviders.of(this).get(MovieDetailsViewModel::class.java)
             it.id?.let { id ->
 
-                movieDetailsViewModel.getSavedMoviesDetails(id, api, database)
-                movieDetailsViewModel.getImageLinks(movieId = id, api = api)
-                movieDetailsViewModel.getVideoLinks(movieId = id, api = api)
+                movieDetailsViewModel.getSavedMoviesDetails(id.toInt(), api, database)
+                movieDetailsViewModel.getImageLinks(movieId = id.toInt(), api = api)
+                movieDetailsViewModel.getVideoLinks(movieId = id.toInt(), api = api)
 
                 movieDetailsViewModel.mutableImageLinks.observe(this,
                     Observer<List<Image>?> { t -> imageAdapter.submitList(t) })
@@ -81,6 +81,6 @@ class MovieDetailScreen : BaseActivity(), AnkoLogger {
     }
 
     override fun getLayoutRes(): Int {
-        return R.layout.movie_detail_screen
+        return R.layout.media_detail_screen
     }
 }

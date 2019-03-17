@@ -15,7 +15,6 @@ import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import kotlin.collections.ArrayList
-import kotlin.concurrent.thread
 
 class MovieDetailsViewModel : ViewModel(), AnkoLogger {
 
@@ -72,16 +71,6 @@ class MovieDetailsViewModel : ViewModel(), AnkoLogger {
         api: TmdbService,
         database: AppDb
     ) {
-//        var movie: MovieInfo? = null
-//        thread {
-//            movie = database.moviesDao().getMovie(movieId)
-
-//            if (movie != null) {
-//                info { "store Movie" }
-//                movieInfo.postValue(movie)
-//            } else {
-//                info { "storedMovie: $movie" }
-
                 val movieImages = getImageResult(movieId, api)
                 val movieVideos = getVideoResult(movieId, api)
                 val serverMovieInfo = getServerMovieInfo(movieId, api)
@@ -103,10 +92,9 @@ class MovieDetailsViewModel : ViewModel(), AnkoLogger {
                     .subscribe({ t ->
                         movieInfo.postValue(t)
                     }, { t ->
+                        t.printStackTrace()
                         info { t.localizedMessage }
                     })?.let { compositeDisposable.add(it) }
-            //}
-//        }
     }
 
     private fun getMovieInfo(

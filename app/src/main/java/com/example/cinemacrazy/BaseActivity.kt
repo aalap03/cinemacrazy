@@ -32,7 +32,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) hideSystemUI()
+        //if (hasFocus) hideSystemUI()
     }
 
     fun hideSystemUI() {
