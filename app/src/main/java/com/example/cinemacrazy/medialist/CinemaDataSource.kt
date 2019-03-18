@@ -1,14 +1,14 @@
-package com.example.cinemacrazy.media
+package com.example.cinemacrazy.medialist
 
 import androidx.paging.PageKeyedDataSource
 import com.example.cinemacrazy.apiservice.TmdbService
 import com.example.cinemacrazy.datamodel.BaseMedia
-import com.example.cinemacrazy.datamodel.MEDIA_MOVIE
+import com.example.cinemacrazy.datamodel.CINEMA_TYPE_MOVIE
 import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 
-class MediaDataSource(var api: TmdbService, var mediaType: String, private val query: String?) :
+class CinemaDataSource(var api: TmdbService, var mediaType: String, private val query: String?) :
     PageKeyedDataSource<Long, BaseMedia>(),
     AnkoLogger {
 
@@ -36,7 +36,7 @@ class MediaDataSource(var api: TmdbService, var mediaType: String, private val q
         val list = mutableListOf<BaseMedia>()
 
 
-        disposable = if (mediaType == MEDIA_MOVIE) {
+        disposable = if (mediaType == CINEMA_TYPE_MOVIE) {
 
             val flowableMovies = if (query == null)
                 api.getTrendingMovies(pageNum)

@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".media.MediaListActivity">
+            tools:context=".medialist.CinemaListActivity">
         <ImageView
                 android:layout_width="150dp"
                 android:layout_height="180dp"

@@ -16,58 +16,14 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import kotlin.collections.ArrayList
 
-class MovieDetailsViewModel : ViewModel(), AnkoLogger {
-
+class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
 
     var compositeDisposable = CompositeDisposable()
-    var mutableImageLinks = MutableLiveData<List<Image>>()
-    var mutableVideoLinks = MutableLiveData<List<Video>>()
 
     var movieInfo = MutableLiveData<MovieInfo>()
 
-    fun getVideoLinks(movieId: Int, api: TmdbService) {
-
-        compositeDisposable.add(
-            api.getMovieVideos(movieId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ t ->
-                    if (t.isSuccessful) {
-                        var list = t.body()?.videos
-                        info { "Videos-> ${list?.size}" }
-                        mutableVideoLinks.postValue(list)
-                    } else {
-                        info { "Video res Error: ${t.errorBody()?.string()}" }
-                    }
-                }, { t ->
-                    t.printStackTrace()
-                    info { "Videos Error: ${t.localizedMessage}" }
-                })
-        )
-    }
-
-    fun getImageLinks(movieId: Int, api: TmdbService) {
-        compositeDisposable.add(
-            api.getMovieImages(movieId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ t ->
-                    if (t.isSuccessful) {
-                        var list = t.body()?.images
-                        info { "Images-> ${list?.size}" }
-                        mutableImageLinks.postValue(list)
-                    } else {
-                        info { "Images res Error: ${t.errorBody()?.string()}" }
-                    }
-                }, { t ->
-                    t.printStackTrace()
-                    info { "IMages Error: ${t.localizedMessage}" }
-                })
-        )
-    }
-
     fun getSavedMoviesDetails(
-        movieId: Int,
+        movieId: Long,
         api: TmdbService,
         database: AppDb
     ) {
@@ -101,7 +57,7 @@ class MovieDetailsViewModel : ViewModel(), AnkoLogger {
         movieInfo: MovieServerResult,
         movieVideo: VideosServerResult,
         movieImage: ImagesServerResult,
-        movieId: Int
+        movieId: Long
     ): MovieInfo {
         val genres: MutableList<MediaGenres> = mutableListOf()
         val videos: MutableList<VideoPath> = mutableListOf()
@@ -112,17 +68,17 @@ class MovieDetailsViewModel : ViewModel(), AnkoLogger {
 
         if (movieInfo.errorMsg == null) {
             movieInfo.movie.genres.forEach {
-                genres.add(MediaGenres(it.id, it.name))
+                genres.add(MediaGenres(it.id, it.name, movieId))
             }
             homePage = movieInfo.movie.homepage!!
             runtime = movieInfo.movie.runtime!!
         }
 
         movieVideo.list.toMutableList().forEach {
-            videos.add(VideoPath(it.key))
+            videos.add(VideoPath(it.key, movieId))
         }
         movieImage.list.toMutableList().forEach {
-            images.add(ImagePath(it.filePath))
+            images.add(ImagePath(it.filePath, movieId))
         }
 
         return MovieInfo(
@@ -134,14 +90,14 @@ class MovieDetailsViewModel : ViewModel(), AnkoLogger {
         )
     }
 
-    private fun getServerMovieInfo(movieId: Int, api: TmdbService): Flowable<MovieServerResult> {
+    private fun getServerMovieInfo(movieId: Long, api: TmdbService): Flowable<MovieServerResult> {
         return api.getMovieInfo(movieId)
             .map { t -> MovieServerResult(t.body() ?: Movie(), t.errorBody()?.string()) }
             .onErrorReturn { MovieServerResult(Movie(), it.localizedMessage) }
 
     }
 
-    private fun getImageResult(movieId: Int, api: TmdbService): Flowable<ImagesServerResult> {
+    private fun getImageResult(movieId: Long, api: TmdbService): Flowable<ImagesServerResult> {
 
         return api.getMovieImages(movieId).map {
 
@@ -150,7 +106,7 @@ class MovieDetailsViewModel : ViewModel(), AnkoLogger {
         }.onErrorReturn { ImagesServerResult(arrayListOf(), it.localizedMessage) }
     }
 
-    private fun getVideoResult(movieId: Int, api: TmdbService): Flowable<VideosServerResult> {
+    private fun getVideoResult(movieId: Long, api: TmdbService): Flowable<VideosServerResult> {
 
         return api.getMovieVideos(movieId).map {
 

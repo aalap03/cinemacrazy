@@ -1,8 +1,6 @@
 package com.example.cinemacrazy.datamodel
 
 import android.os.Parcelable
-import android.text.method.BaseMovementMethod
-import androidx.versionedparcelable.ParcelField
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -77,7 +75,7 @@ data class TrendingMovie(
 
 ) : BaseMedia, Parcelable {
     override fun mediaType(): String {
-        return MEDIA_MOVIE
+        return CINEMA_TYPE_MOVIE
     }
 
     override fun getMediaId(): Long {
@@ -149,7 +147,7 @@ data class TrendingTv(
     var overView: String = ""
 ) : BaseMedia, Parcelable {
     override fun mediaType(): String {
-        return MEDIA_TV
+        return CINEMA_TYPE_TV
     }
 
     override fun getMediaId(): Long {
@@ -260,8 +258,15 @@ data class Genre(
     var id: Int = 0
 )
 
-val MEDIA_TV = "media_tv"
-val MEDIA_MOVIE = "media_movie"
+val CINEMA_TYPE_TV = "cinema_tv"
+val CINEMA_TYPE_MOVIE = "cinema_movie"
+val KEY_CINEMA_TYPE = "cinema_type"
+val KEY_CINEMA_ID = "cinema_type"
+
+val MEDIA_TYPE_IMAGES = "images"
+val MEDIA_TYPE_VIDEOS = "videos"
+val KEY_MEDIA_TYPE = "media_type"
+val KEY_MEDIA_IDS = "media_ids"
 
 fun String.YOUTUBE_VIDEO_PATH() = "https://www.youtube.com/watch?v=$this"
 fun String.TMDB_IMAGE_PATH(): String = "https://image.tmdb.org/t/p/original/$this"

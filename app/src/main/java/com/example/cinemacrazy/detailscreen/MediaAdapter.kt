@@ -28,8 +28,11 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
     }
 
 }) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder =
-        MediaHolder(LayoutInflater.from(parent.context).inflate(R.layout.simple_image_card_item, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder{
+
+        return MediaHolder(LayoutInflater.from(parent.context).inflate(R.layout.simple_image_card_item, parent, false))
+    }
+
 
     override fun onBindViewHolder(holder: MediaHolder, position: Int) {
         holder.bindView(getItem(position))

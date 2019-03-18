@@ -1,4 +1,4 @@
-package com.example.cinemacrazy.media
+package com.example.cinemacrazy.medialist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,15 +8,15 @@ import androidx.paging.PagedList
 import com.example.cinemacrazy.apiservice.TmdbService
 import com.example.cinemacrazy.datamodel.BaseMedia
 
-class MediaViewModel : ViewModel() {
+class CinemaViewModel : ViewModel() {
 
-    lateinit var factory: MediaDataSourceFactory
+    lateinit var factory: CinemaDataSourceFactory
     var mutableMediaType = MutableLiveData<String>()
 
     fun getMediaLive(api: TmdbService, mediaType: String, query: String?): LiveData<PagedList<BaseMedia>> {
 
 
-        factory = MediaDataSourceFactory(api, mediaType, query)
+        factory = CinemaDataSourceFactory(api, mediaType, query)
 
         val config = PagedList.Config
             .Builder()
