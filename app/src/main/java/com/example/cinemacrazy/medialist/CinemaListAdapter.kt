@@ -20,16 +20,17 @@ import com.example.cinemacrazy.datamodel.*
 val POSTERPATH = "http://image.tmdb.org/t/p/w185/"
 val MOVIE_DETAIL = "movie_details"
 
-class MoviesAdapter: PagedListAdapter<BaseMedia, MoviesAdapter.MovieHolder>(object: DiffUtil.ItemCallback<BaseMedia>(){
-    override fun areItemsTheSame(oldItem: BaseMedia, newItem: BaseMedia): Boolean {
-        return oldItem.getMediaId() == newItem.getMediaId()
-    }
+class MoviesAdapter :
+    PagedListAdapter<BaseMedia, MoviesAdapter.MovieHolder>(object : DiffUtil.ItemCallback<BaseMedia>() {
+        override fun areItemsTheSame(oldItem: BaseMedia, newItem: BaseMedia): Boolean {
+            return oldItem.getMediaId() == newItem.getMediaId()
+        }
 
-    override fun areContentsTheSame(oldItem: BaseMedia, newItem: BaseMedia): Boolean {
-        return oldItem.posterPath() == newItem.posterPath()
-    }
+        override fun areContentsTheSame(oldItem: BaseMedia, newItem: BaseMedia): Boolean {
+            return oldItem.posterPath() == newItem.posterPath()
+        }
 
-}), AnkoLogger {
+    }), AnkoLogger {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder =
         MovieHolder(LayoutInflater.from(parent.context).inflate(R.layout.media_item, parent, false))
 
@@ -37,26 +38,28 @@ class MoviesAdapter: PagedListAdapter<BaseMedia, MoviesAdapter.MovieHolder>(obje
         getItem(position)?.let { holder.bindItem(it) }
     }
 
-    inner class MovieHolder( itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class MovieHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var movieTitle : TextView = itemView.findViewById(R.id.movie_title)
-        var movieContent : TextView = itemView.findViewById(R.id.movie_content)
-        var moviePoster : ImageView = itemView.findViewById(R.id.movie_poster)
+        var moviePoster: ImageView = itemView.findViewById(R.id.movie_poster)
 
         fun bindItem(item: BaseMedia) {
-            movieContent.text = item.overView()
-            movieTitle.text = item.getName()
 
-            info{"Item: $item"}
+            val width = itemView.resources.displayMetrics.widthPixels / 2
+
+            info { "Item: $item" }
+            itemView.layoutParams.width = width
+            itemView.layoutParams.height = width
 
             Glide.with(itemView.context)
-                .applyDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_launcher_foreground).error(R.drawable.ic_launcher_foreground))
+                .applyDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_launcher_foreground).error(R.drawable.ic_launcher_foreground).override(width, width))
                 .load(item.posterPath()?.TMDB_IMAGE_PATH() ?: "")
+                .override(width, width)
+                .centerCrop()
                 .into(moviePoster)
 
             itemView.setOnClickListener {
-                val trendingTv = if(item.mediaType() == CINEMA_TYPE_TV) item as TrendingTv else null
-                val trendingMovie = if(item.mediaType() == CINEMA_TYPE_MOVIE) item as TrendingMovie else null
+                val trendingTv = if (item.mediaType() == CINEMA_TYPE_TV) item as TrendingTv else null
+                val trendingMovie = if (item.mediaType() == CINEMA_TYPE_MOVIE) item as TrendingMovie else null
 
                 val intent = Intent(itemView.context, CinemaDetailScreen::class.java)
                 intent.putExtra(KEY_CINEMA_TYPE, item.mediaType())

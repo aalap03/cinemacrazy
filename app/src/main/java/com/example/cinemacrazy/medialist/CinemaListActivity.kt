@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cinemacrazy.BaseActivity
 import com.example.cinemacrazy.R
@@ -27,13 +28,13 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.layoutManager = GridLayoutManager(this, 2)
         adapter = MoviesAdapter()
-        supportActionBar?.setTitle("")
+        supportActionBar?.title = ""
         recycler_view.adapter = adapter
         media_selector.setArrowColor(R.color.colorAccent.getColor(this))
         media_selector.setTextColor(R.color.colorPrimaryDark.getColor(this))
-        media_selector.setBackgroundColor(R.color.colorPrimary.getColor(this))
+        media_selector.setBackgroundColor(android.R.color.transparent.getColor(this))
         media_selector.setItems("Trending Movies", "Trending TV Shows")
         media_selector.setOnItemSelectedListener { _, position, _, _ ->
             displayLiveMedia(if (position == 0) CINEMA_TYPE_MOVIE else CINEMA_TYPE_TV, null)

@@ -35,7 +35,6 @@ class CinemaDataSource(var api: TmdbService, var mediaType: String, private val 
 
         val list = mutableListOf<BaseMedia>()
 
-
         disposable = if (mediaType == CINEMA_TYPE_MOVIE) {
 
             val flowableMovies = if (query == null)

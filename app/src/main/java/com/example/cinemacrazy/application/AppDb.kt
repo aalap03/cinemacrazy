@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.example.cinemacrazy.datamodel.*
 import com.example.cinemacrazy.datamodel.daos.MovieDao
 
-@Database(version = 2, entities = [MovieInfo::class, MediaGenres::class, ImagePath::class, VideoPath::class])
+@Database(version = 3, entities = [MovieInfo::class, MediaGenres::class, ImagePath::class, VideoPath::class])
 @TypeConverters(Convertors::class)
 abstract class AppDb: RoomDatabase() {
 
