@@ -1,11 +1,15 @@
 package com.example.cinemacrazy.medialist
 
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,7 +18,13 @@ import com.example.cinemacrazy.detailscreen.CinemaDetailScreen
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import androidx.paging.PagedListAdapter
+import androidx.palette.graphics.Palette
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.example.cinemacrazy.application.getColor
 import com.example.cinemacrazy.datamodel.*
 
 val POSTERPATH = "http://image.tmdb.org/t/p/w185/"
@@ -41,21 +51,55 @@ class MoviesAdapter :
     inner class MovieHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var moviePoster: ImageView = itemView.findViewById(R.id.movie_poster)
+        var cinemaTitle: TextView = itemView.findViewById(R.id.cinema_title)
+        var titleContainer: FrameLayout = itemView.findViewById(R.id.title_container)
 
         fun bindItem(item: BaseMedia) {
 
             val width = itemView.resources.displayMetrics.widthPixels / 2
 
             info { "Item: $item" }
+
             itemView.layoutParams.width = width
-            itemView.layoutParams.height = width
+            itemView.layoutParams.height = (width + 40.dpTopx(itemView.resources)).toInt()
 
             Glide.with(itemView.context)
-                .applyDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_launcher_foreground).error(R.drawable.ic_launcher_foreground).override(width, width))
-                .load(item.posterPath()?.TMDB_IMAGE_PATH() ?: "")
-                .override(width, width)
-                .centerCrop()
+                .getGlide(itemView.context,
+                    width,
+                    item.posterPath()?.TMDB_IMAGE_PATH() ?: ""
+                )
+                .addListener(object: RequestListener<Drawable?> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable?>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return true
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable?>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        val bitmap = (resource as BitmapDrawable).bitmap
+                        moviePoster.setImageBitmap(bitmap)
+                        Palette.from(bitmap).generate { palette ->
+
+                            val darkVibrantColor = palette?.getDarkVibrantColor(R.color.colorAccent.getColor(itemView.context))
+                            darkVibrantColor?.let { titleContainer.setBackgroundColor(it) }
+
+                        }
+                        return true
+                    }
+                })
                 .into(moviePoster)
+
+
+            cinemaTitle.text = item.getName()
 
             itemView.setOnClickListener {
                 val trendingTv = if (item.mediaType() == CINEMA_TYPE_TV) item as TrendingTv else null

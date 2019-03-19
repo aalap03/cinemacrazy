@@ -47,8 +47,8 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
                 Glide.with(view.context)
                     .applyDefaultRequestOptions(
                         RequestOptions()
-                            .placeholder(R.mipmap.ic_launcher_round)
-                            .error(R.drawable.ic_launcher_foreground)
+                            .placeholder(R.drawable.gradient.getDrawable(context = itemView.context))
+                            .error(R.drawable.gradient.getDrawable(context = itemView.context))
                     )
                     .load(media.getLinkKey().TMDB_IMAGE_PATH())
                     .into(cardImage)

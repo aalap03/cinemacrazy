@@ -1,6 +1,10 @@
 package com.example.cinemacrazy.datamodel
 
+import android.content.Context
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.os.Parcelable
+import androidx.core.content.ContextCompat
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -295,11 +299,6 @@ val MEDIA_TYPE_VIDEOS = "videos"
 val KEY_MEDIA_TYPE = "media_type"
 val KEY_MEDIA_IDS = "media_ids"
 
-fun String.YOUTUBE_VIDEO_PATH() = "https://www.youtube.com/watch?v=$this"
-fun String.TMDB_IMAGE_PATH(): String = "https://image.tmdb.org/t/p/original/$this"
 
-fun String.YOUTUBE_THUMBNAIL(): String =
-    "https://img.youtube.com/vi/" +
-            this.replace(".jpg", "").replace(".png", "").replace("/", "") +
-            "/0.jpg"
+
 

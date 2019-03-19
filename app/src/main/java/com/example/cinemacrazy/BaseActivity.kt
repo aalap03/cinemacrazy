@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.cinemacrazy.apiservice.TmdbService
+import com.example.cinemacrazy.application.App
 import com.example.cinemacrazy.application.AppDb
 import com.example.cinemacrazy.di.components.DaggerMoviesComponent
 import com.example.cinemacrazy.di.modules.ContextModule
@@ -13,6 +14,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
     @Inject
     lateinit var api: TmdbService
+
+    @Inject
+    lateinit var app: App
 
     @Inject
     lateinit var database: AppDb

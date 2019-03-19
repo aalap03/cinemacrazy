@@ -21,7 +21,6 @@ import org.jetbrains.anko.AnkoLogger
 
 class CinemaDetailScreen : BaseActivity(), AnkoLogger {
 
-    lateinit var app: App
     var movie: TrendingMovie? = null
     var tv: TrendingTv? = null
     var mediaType = ""
@@ -35,9 +34,6 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        app = App()
-
         recycler_view_images.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recycler_view_images.adapter = imageAdapter
         recycler_view_videos.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -69,7 +65,7 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
         detailsViewModel.liveCinemaInfo.observe(this,
             Observer<CinemaInfo?> { cinemaInfo ->
                 cinema_home_page.text = cinemaInfo?.homePageLink
-                cinema_runtime.text = "${cinemaInfo?.runTimeMinutes}"
+                cinema_runtime.text = "Runtime ${cinemaInfo?.runTimeMinutes} Minutes"
             })
 
         detailsViewModel.liveImagePaths.observe(this,
@@ -85,8 +81,6 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
         detailsViewModel.videosLoading.observe(this, Observer<Boolean?> {
             videos_loading.visibility = if (it == true) View.VISIBLE else View.GONE
         })
-
-
     }
 
     //DONE PART
@@ -109,8 +103,7 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
             .into(movie_image)
 
         movie_overview.text = movie.overView()
-        movie_genre.text = genres
-
+        movie_genre.text = genres.replace("[", "").replace("]", "")
     }
 
     override fun getLayoutRes(): Int {

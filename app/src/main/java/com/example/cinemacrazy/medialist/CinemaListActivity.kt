@@ -15,6 +15,7 @@ import com.example.cinemacrazy.application.getColor
 import com.example.cinemacrazy.datamodel.BaseMedia
 import com.example.cinemacrazy.datamodel.CINEMA_TYPE_MOVIE
 import com.example.cinemacrazy.datamodel.CINEMA_TYPE_TV
+import com.example.cinemacrazy.datamodel.getDrawable
 import kotlinx.android.synthetic.main.media_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -32,14 +33,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         adapter = MoviesAdapter()
         supportActionBar?.title = ""
         recycler_view.adapter = adapter
-        media_selector.setArrowColor(R.color.colorAccent.getColor(this))
-        media_selector.setTextColor(R.color.colorPrimaryDark.getColor(this))
-        media_selector.setBackgroundColor(android.R.color.transparent.getColor(this))
-        media_selector.setItems("Trending Movies", "Trending TV Shows")
-        media_selector.setOnItemSelectedListener { _, position, _, _ ->
-            displayLiveMedia(if (position == 0) CINEMA_TYPE_MOVIE else CINEMA_TYPE_TV, null)
-        }
-
+        setSpinner()
         viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
 
 
@@ -47,6 +41,13 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
 
 
         displayLiveMedia(MEDIA_TYPE, null)
+    }
+
+    private fun setSpinner() {
+        media_selector.setItems("Trending Movies", "Trending TV Shows")
+        media_selector.setOnItemSelectedListener { _, position, _, _ ->
+            displayLiveMedia(if (position == 0) CINEMA_TYPE_MOVIE else CINEMA_TYPE_TV, null)
+        }
     }
 
     override fun getLayoutRes(): Int {

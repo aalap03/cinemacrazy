@@ -18,7 +18,7 @@
             <ImageView
                     android:layout_width="match_parent"
                     android:id="@+id/movie_image"
-                    android:src="@color/colorAccent"
+                    android:src="@drawable/ic_launcher_background"
                     android:scaleType="centerCrop"
                     android:transitionName="poster"
                     app:layout_collapseMode="pin"
@@ -38,6 +38,7 @@
 
     <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
+            android:background="@drawable/gradient"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_height="wrap_content">
 
