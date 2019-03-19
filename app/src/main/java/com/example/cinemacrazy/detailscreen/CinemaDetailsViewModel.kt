@@ -47,14 +47,14 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
         this.cinemaType = cinemaType
 
         thread {
-            val moviesDao = database.cinemaDao()
+            val cinemaDao = database.cinemaDao()
             val imagesDao = database.imagesDao()
             val videoDao = database.videosDao()
 
             if (cinemaType == CINEMA_TYPE_MOVIE) {
-                val movieInfo = moviesDao.getCinema(cinemaId, cinemaType)
+                val dbMovieInfo = cinemaDao.getCinema(cinemaId, cinemaType)
 
-                if (movieInfo == null) {
+                if (dbMovieInfo == null) {
 
                     imagesLoading.postValue(true)
                     videosLoading.postValue(true)
@@ -75,20 +75,35 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                             cinemaInfo
                         })
                         .subscribe({ t ->
-                            moviesDao.insertCinema(t)
+                            cinemaDao.insertCinema(t)
                         }, { t ->
-                            moviesDao.insertCinema(cinemaInfo)
+                            cinemaDao.insertCinema(cinemaInfo)
                         }, {
                             imagesLoading.postValue(false)
                             videosLoading.postValue(false)
                         })
 
                 } else {
-                    val images = movieInfo.images
-                    val videos = movieInfo.videos
+                    val images = dbMovieInfo.images
+                    val videos = dbMovieInfo.videos
 
                     if (images == null) {
-                        imagesLoading.postValue(true)
+                        val imagesForCinema = imagesDao.getImagesForCinema(cinemaId, cinemaType)
+                        if (imagesForCinema?.value?.isNotEmpty() == true) {
+                            listImageMedia.addAll(imagesForCinema?.value ?: mutableListOf())
+                            liveImagePaths.postValue(listImageMedia)
+                        } else {
+                            imagesLoading.postValue(true)
+
+                            compositeDisposable.add(
+                                api.getMovieImages(cinemaId)
+                                    .subscribe({ t ->
+                                        saveImages(t, imagesDao, dbMovieInfo)
+                                    }, { t ->
+                                        info { "error: while getting images ${t.localizedMessage}" }
+                                    })
+                            )
+                        }
                     } else {
                         listImageMedia.addAll(images)
                         liveImagePaths.postValue(listImageMedia)
@@ -96,7 +111,21 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                     }
 
                     if (videos == null) {
-                        videosLoading.postValue(true)
+                        val videosForCinema = videoDao.getVideosForCinema(cinemaId, cinemaType)
+                        if (videosForCinema?.value?.isNotEmpty() == true) {
+                            listVideoMedia.addAll(videosForCinema?.value ?: mutableListOf())
+                            liveVideoPaths.postValue(listVideoMedia)
+                        } else {
+                            videosLoading.postValue(true)
+                            compositeDisposable.add(
+                                api.getMovieVideos(cinemaId)
+                                    .subscribe({ t ->
+                                        saveVideos(t, videoDao, dbMovieInfo)
+                                    }, { t ->
+                                        info { "error: while getting videos ${t.localizedMessage}" }
+                                    })
+                            )
+                        }
                     } else {
                         listVideoMedia.addAll(videos)
                         liveVideoPaths.postValue(listVideoMedia)
