@@ -20,7 +20,7 @@ interface TmdbService {
 
     //https://api.themoviedb.org/3/search/tv?api_key=70ca97bc3cbdc59a4577ea0dbeb9da00&language=en-US&page=1&query=night
     @GET("search/movie?api_key=${BuildConfig.TMDB_API_KEY}")
-    fun getSearchMovies(@Query("query") query: String, @Query("page")pageNum: Long): Flowable<Response<ResponseMovie>>
+    fun getSearchMovies(@Query("query") query: String, @Query("page") pageNum: Long): Flowable<Response<ResponseMovie>>
 
     @GET("search/tv?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getSearchTV(@Query("query") query: String, @Query("page") pageNum: Long): Flowable<Response<ResponseTV>>
@@ -41,5 +41,11 @@ interface TmdbService {
 
     @GET("movie/{movieId}/images?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getMovieImages(@Path("movieId") movieId: Long): Flowable<Response<ImageResult>>
+
+    @GET("tv/{tvId}/videos?api_key=${BuildConfig.TMDB_API_KEY}")
+    fun getTvVideos(@Path("tvId") cinemaId: Long): Flowable<Response<VideoResult>>
+
+    @GET("tv/{tvId}/images?api_key=${BuildConfig.TMDB_API_KEY}")
+    fun getTvImages(@Path("tvId") cinemaId: Long): Flowable<Response<ImageResult>>
 
 }

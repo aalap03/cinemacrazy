@@ -27,15 +27,33 @@ data class CinemaInfo(
 data class ImagePath(
     @PrimaryKey
     var key: String = "",
-    var cinemaId: Long
-)
+    var cinemaId: Long,
+    var cinemaType: String
+): MovieMedia {
+    override fun getLinkKey(): String {
+        return key
+    }
+
+    override fun mediaType(): String {
+        return IMAGE
+    }
+}
 
 @Entity
 data class VideoPath(
     @PrimaryKey
     var key: String = "",
-    var cinemaId: Long
-)
+    var cinemaId: Long,
+    var cinemaType: String
+): MovieMedia {
+    override fun getLinkKey(): String {
+        return key
+    }
+
+    override fun mediaType(): String {
+        return VIDEO
+    }
+}
 
 class Convertors {
 
@@ -43,32 +61,30 @@ class Convertors {
 
         @TypeConverter
         @JvmStatic
-        fun toImagePathToString(imgePaths: MutableList<ImagePath>): String {
-            return imgePaths.joinToString(separator = ",") { "${it.key}:${it.cinemaId}" }
+        fun imagesToString(images: MutableList<ImagePath>?): String? {
+            var gson = Gson()
+            return gson.toJson(images)
         }
 
         @TypeConverter
         @JvmStatic
-        fun toImageList(imagePathStrings: String): MutableList<ImagePath> {
-            return imagePathStrings.split(",").map {
-                val split = it.split(":")
-                ImagePath(split[0], split[1].toLong())
-            }.toMutableList()
+        fun stringToImagePaths(imagesAsString: String?): MutableList<ImagePath>? {
+            var gson = Gson()
+            return gson.fromJson<MutableList<ImagePath>>(imagesAsString, ImagePath::class.java)
         }
 
         @TypeConverter
         @JvmStatic
-        fun toVideoPathToString(videoPathString: MutableList<VideoPath>): String {
-            return videoPathString.joinToString(separator = ",") { "${it.key}:${it.cinemaId}" }
+        fun videosToString(videos: MutableList<VideoPath>?): String? {
+            var gson = Gson()
+            return gson.toJson(videos)
         }
 
         @TypeConverter
         @JvmStatic
-        fun toVideoList(genreString: String): MutableList<VideoPath> {
-            return genreString.split(",").map {
-                val split = it.split(":")
-                VideoPath(split[0], split[1].toLong())
-            }.toMutableList()
+        fun stringToVideoPaths(videosAsString: String?): MutableList<VideoPath>? {
+            var gson = Gson()
+            return gson.fromJson<MutableList<VideoPath>>(videosAsString, VideoPath::class.java)
         }
     }
 

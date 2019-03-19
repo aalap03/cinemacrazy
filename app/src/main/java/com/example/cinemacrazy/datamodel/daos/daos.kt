@@ -11,13 +11,13 @@ import com.example.cinemacrazy.datamodel.CinemaInfo
 import com.example.cinemacrazy.datamodel.VideoPath
 
 @Dao
-interface MovieDao {
+interface CinemaDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMovie(cinemaInfo: CinemaInfo)
+    fun insertCinema(cinemaInfo: CinemaInfo)
 
-    @Query("SELECT * FROM movie_info WHERE id = :movieId")
-    fun getMovie(movieId: Long): CinemaInfo?
+    @Query("SELECT * FROM movie_info WHERE id = :movieId & cinemaType =:cinemaType")
+    fun getCinema(movieId: Long, cinemaType: String): CinemaInfo?
 }
 
 @Dao
@@ -26,8 +26,8 @@ interface ImagesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertImages(listOfImages: MutableList<ImagePath>)
 
-    @Query("SELECT * FROM ImagePath WHERE cinemaId = :cinemaId")
-    fun getImagesForCinema(cinemaId: Long): LiveData<MutableList<ImagePath>>?
+    @Query("SELECT * FROM ImagePath WHERE cinemaId = :cinemaId & cinemaType =:cinemaType")
+    fun getImagesForCinema(cinemaId: Long, cinemaType: String): LiveData<MutableList<ImagePath>>?
 }
 
 @Dao
@@ -36,6 +36,6 @@ interface VideosDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertVideos(listOfVideos: MutableList<VideoPath>)
 
-    @Query("SELECT * FROM VideoPath WHERE cinemaId = :cinemaId")
-    fun getVideosForCinema(cinemaId: Long): LiveData<MutableList<VideoPath>>?
+    @Query("SELECT * FROM VideoPath WHERE cinemaId = :cinemaId & cinemaType =:cinemaType")
+    fun getVideosForCinema(cinemaId: Long, cinemaType: String): LiveData<MutableList<VideoPath>>?
 }

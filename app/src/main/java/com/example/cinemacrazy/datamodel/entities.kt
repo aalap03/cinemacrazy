@@ -26,7 +26,7 @@ data class Video(
 data class VideoResult(
     @SerializedName("results")
     @Expose
-    var videos: ArrayList<Video> = arrayListOf()
+    var videos: MutableList<Video> = mutableListOf()
 )
 
 data class Image(
@@ -46,7 +46,7 @@ data class Image(
 data class ImageResult(
     @SerializedName("backdrops")
     @Expose
-    var images: ArrayList<Image> = arrayListOf()
+    var images: MutableList<Image> = arrayListOf()
 )
 
 interface MovieMedia {

@@ -7,14 +7,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.cinemacrazy.datamodel.*
 import com.example.cinemacrazy.datamodel.daos.ImagesDao
-import com.example.cinemacrazy.datamodel.daos.MovieDao
+import com.example.cinemacrazy.datamodel.daos.CinemaDao
 import com.example.cinemacrazy.datamodel.daos.VideosDao
 
-@Database(version = 3, entities = [CinemaInfo::class, ImagePath::class, VideoPath::class])
+@Database(version = 4, entities = [CinemaInfo::class, ImagePath::class, VideoPath::class])
 @TypeConverters(Convertors::class)
 abstract class AppDb: RoomDatabase() {
 
-    abstract fun moviesDao(): MovieDao
+    abstract fun cinemaDao(): CinemaDao
     abstract fun imagesDao(): ImagesDao
     abstract fun videosDao(): VideosDao
 

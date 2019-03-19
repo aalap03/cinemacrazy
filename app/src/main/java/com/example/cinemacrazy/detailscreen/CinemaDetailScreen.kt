@@ -2,6 +2,7 @@ package com.example.cinemacrazy.detailscreen
 
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -49,8 +50,7 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
             arrayList?.let {
                 genres = app.getMoviesGenre(it).toString()
             }
-        }
-        else {
+        } else {
             tv = intent.getParcelableExtra(MOVIE_DETAIL)
             val arrayList = tv?.genreIds()
             arrayList?.let {
@@ -66,6 +66,26 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
 
         detailsViewModel.requestCinemaDetails(baseMedia.getMediaId(), api, database, baseMedia.mediaType())
 
+        detailsViewModel.liveCinemaInfo.observe(this,
+            Observer<CinemaInfo?> { cinemaInfo ->
+                cinema_home_page.text = cinemaInfo?.homePageLink
+                cinema_runtime.text = "${cinemaInfo?.runTimeMinutes}"
+            })
+
+        detailsViewModel.liveImagePaths.observe(this,
+            Observer<MutableList<MovieMedia>?> { t -> imageAdapter.submitList(t) })
+
+        detailsViewModel.liveVideoPaths.observe(this,
+            Observer<MutableList<MovieMedia>?> { videos -> videoAdapter.submitList(videos) })
+
+        detailsViewModel.imagesLoading.observe(this, Observer<Boolean?> {
+            image_loading.visibility = if (it == true) View.VISIBLE else View.GONE
+        })
+
+        detailsViewModel.videosLoading.observe(this, Observer<Boolean?> {
+            videos_loading.visibility = if (it == true) View.VISIBLE else View.GONE
+        })
+
 
     }
 
@@ -74,7 +94,7 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
 
         val displayMetrics = DisplayMetrics()
         window.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val height = displayMetrics.heightPixels  / 3
+        val height = displayMetrics.heightPixels / 3
         val params = CollapsingToolbarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
 
         movie_image.layoutParams = params
