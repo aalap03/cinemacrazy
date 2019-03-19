@@ -223,7 +223,19 @@ data class MovieDetails(
     @SerializedName("runtime")
     @Expose
     var runtime: Int? = null
-)
+):BaseCinemaDetail {
+    override fun genre(): ArrayList<Genre> {
+        return genres
+    }
+
+    override fun homepage(): String? {
+        return homepage
+    }
+
+    override fun runtime(): Int {
+        return runtime ?: 0
+    }
+}
 
 data class TvDetails(
     @SerializedName("episode_run_time")
@@ -238,7 +250,31 @@ data class TvDetails(
     @SerializedName("id")
     @Expose
     var id: Int? = 0
-)
+) : BaseCinemaDetail {
+    override fun homepage(): String? {
+        return homepage
+    }
+
+    override fun runtime(): Int {
+        return if (listOfRuntimes.isNotEmpty() && listOfRuntimes.size > 1)
+            listOfRuntimes[1]
+        else if (listOfRuntimes.isNotEmpty())
+            listOfRuntimes[0]
+        else
+            0
+    }
+
+    override fun genre(): ArrayList<Genre> {
+        return genres
+    }
+
+}
+
+interface BaseCinemaDetail {
+    fun homepage(): String?
+    fun runtime(): Int
+    fun genre(): ArrayList<Genre>
+}
 
 data class Genre(
     @SerializedName("name")

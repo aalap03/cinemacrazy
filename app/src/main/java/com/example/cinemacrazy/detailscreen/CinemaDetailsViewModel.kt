@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.cinemacrazy.apiservice.TmdbService
 import com.example.cinemacrazy.application.AppDb
 import com.example.cinemacrazy.datamodel.*
+import com.example.cinemacrazy.datamodel.daos.CinemaDao
 import com.example.cinemacrazy.datamodel.daos.ImagesDao
 import com.example.cinemacrazy.datamodel.daos.VideosDao
 import io.reactivex.Flowable
@@ -23,6 +24,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
     var videosLoading = MutableLiveData<Boolean>()
     var liveImagePaths = MutableLiveData<MutableList<MovieMedia>>()
     var liveVideoPaths = MutableLiveData<MutableList<MovieMedia>>()
+
     var listImageMedia = mutableListOf<MovieMedia>()
     var listVideoMedia = mutableListOf<MovieMedia>()
 
@@ -62,81 +64,119 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                     val cinemaInfo = CinemaInfo()
                     cinemaInfo.id = cinemaId
                     cinemaInfo.cinemaType = cinemaType
-
-                    val movieInfo1 = api.getMovieInfo(cinemaId)
-                    val movieImages = api.getMovieImages(cinemaId)
-                    val movieVideos = api.getMovieVideos(cinemaId)
-
-                    Flowable.zip(movieInfo1, movieImages, movieVideos,
-                        Function3<Response<MovieDetails>, Response<ImageResult>, Response<VideoResult>, CinemaInfo> { t1, t2, t3 ->
-                            saveCinemaInfo(t1, cinemaInfo)
-                            saveImages(t2, imagesDao, cinemaInfo)
-                            saveVideos(t3, videoDao, cinemaInfo)
-                            cinemaInfo
-                        })
-                        .subscribe({ t ->
-                            cinemaDao.insertCinema(t)
-                        }, { t ->
-                            cinemaDao.insertCinema(cinemaInfo)
-                        }, {
-                            imagesLoading.postValue(false)
-                            videosLoading.postValue(false)
-                        })
+                    startSaving(cinemaInfo, imagesDao, videoDao, cinemaDao, api.getMovieInfo(cinemaId).map { it })
 
                 } else {
-                    val images = dbMovieInfo.images
-                    val videos = dbMovieInfo.videos
-
-                    if (images == null) {
-                        val imagesForCinema = imagesDao.getImagesForCinema(cinemaId, cinemaType)
-                        if (imagesForCinema?.value?.isNotEmpty() == true) {
-                            listImageMedia.addAll(imagesForCinema?.value ?: mutableListOf())
-                            liveImagePaths.postValue(listImageMedia)
-                        } else {
-                            imagesLoading.postValue(true)
-
-                            compositeDisposable.add(
-                                api.getMovieImages(cinemaId)
-                                    .subscribe({ t ->
-                                        saveImages(t, imagesDao, dbMovieInfo)
-                                    }, { t ->
-                                        info { "error: while getting images ${t.localizedMessage}" }
-                                    })
-                            )
-                        }
-                    } else {
-                        listImageMedia.addAll(images)
-                        liveImagePaths.postValue(listImageMedia)
-                        imagesLoading.postValue(false)
-                    }
-
-                    if (videos == null) {
-                        val videosForCinema = videoDao.getVideosForCinema(cinemaId, cinemaType)
-                        if (videosForCinema?.value?.isNotEmpty() == true) {
-                            listVideoMedia.addAll(videosForCinema?.value ?: mutableListOf())
-                            liveVideoPaths.postValue(listVideoMedia)
-                        } else {
-                            videosLoading.postValue(true)
-                            compositeDisposable.add(
-                                api.getMovieVideos(cinemaId)
-                                    .subscribe({ t ->
-                                        saveVideos(t, videoDao, dbMovieInfo)
-                                    }, { t ->
-                                        info { "error: while getting videos ${t.localizedMessage}" }
-                                    })
-                            )
-                        }
-                    } else {
-                        listVideoMedia.addAll(videos)
-                        liveVideoPaths.postValue(listVideoMedia)
-                        videosLoading.postValue(false)
-                    }
+                    lookForImagesAndVideos(dbMovieInfo, imagesDao, videoDao)
                 }
             } else {
+                val dbTvInfo = cinemaDao.getCinema(cinemaId, cinemaType)
+                if (dbTvInfo == null) {
+                    imagesLoading.postValue(true)
+                    videosLoading.postValue(true)
 
+                    val cinemaInfo = CinemaInfo()
+                    cinemaInfo.id = cinemaId
+                    cinemaInfo.cinemaType = cinemaType
+
+                    val tvInfo = api.getTvInfo(cinemaId)
+                    startSaving(cinemaInfo, imagesDao, videoDao, cinemaDao, tvInfo.map { it })
+
+                } else {
+                    lookForImagesAndVideos(dbTvInfo, imagesDao, videoDao)
+                }
             }
         }
 
+    }
+
+    private fun lookForImagesAndVideos(
+        dbMovieInfo: CinemaInfo,
+        imagesDao: ImagesDao,
+        videoDao: VideosDao
+    ) {
+        val images = dbMovieInfo.images
+        val videos = dbMovieInfo.videos
+
+        if (images == null) {
+            val imagesForCinema = imagesDao.getImagesForCinema(cinemaId, cinemaType)
+            if (imagesForCinema?.value?.isNotEmpty() == true) {
+                listImageMedia.addAll(imagesForCinema?.value ?: mutableListOf())
+                liveImagePaths.postValue(listImageMedia)
+            } else {
+                imagesLoading.postValue(true)
+
+                compositeDisposable.add(
+                    (if (cinemaType == CINEMA_TYPE_MOVIE) api.getMovieImages(cinemaId) else api.getTvImages(cinemaId))
+                        .subscribe({ t ->
+                            saveImages(t, imagesDao, dbMovieInfo)
+                        }, { t ->
+                            info { "error: while getting images ${t.localizedMessage}" }
+                        })
+                )
+            }
+        } else {
+            listImageMedia.addAll(images)
+            liveImagePaths.postValue(listImageMedia)
+            imagesLoading.postValue(false)
+        }
+
+        if (videos == null) {
+            val videosForCinema = videoDao.getVideosForCinema(cinemaId, cinemaType)
+            if (videosForCinema?.value?.isNotEmpty() == true) {
+                listVideoMedia.addAll(videosForCinema?.value ?: mutableListOf())
+                liveVideoPaths.postValue(listVideoMedia)
+            } else {
+                videosLoading.postValue(true)
+                compositeDisposable.add(
+                    (if (cinemaType == CINEMA_TYPE_MOVIE) api.getMovieVideos(cinemaId) else api.getTvVideos(cinemaId))
+                        .subscribe({ t ->
+                            saveVideos(t, videoDao, dbMovieInfo)
+                        }, { t ->
+                            info { "error: while getting videos ${t.localizedMessage}" }
+                        })
+                )
+            }
+        } else {
+            listVideoMedia.addAll(videos)
+            liveVideoPaths.postValue(listVideoMedia)
+            videosLoading.postValue(false)
+        }
+    }
+
+    private fun startSaving(
+        cinemaInfo: CinemaInfo,
+        imagesDao: ImagesDao,
+        videoDao: VideosDao,
+        cinemaDao: CinemaDao,
+        baseCinemaDetailResponse: Flowable<Response<out BaseCinemaDetail>>
+    ) {
+
+        val imageResultRes =
+            if (cinemaType == CINEMA_TYPE_MOVIE) api.getMovieImages(cinemaId) else api.getTvImages(cinemaId)
+        val videoResultRes =
+            if (cinemaType == CINEMA_TYPE_MOVIE) api.getMovieVideos(cinemaId) else api.getTvVideos(cinemaId)
+
+        compositeDisposable.add(
+            Flowable.zip(baseCinemaDetailResponse, imageResultRes, videoResultRes,
+                Function3<Response<out BaseCinemaDetail>, Response<ImageResult>, Response<VideoResult>, CinemaInfo>
+                { t1, t2, t3 ->
+                    saveCinemaInfo(t1, cinemaInfo)
+                    saveImages(t2, imagesDao, cinemaInfo)
+                    saveVideos(t3, videoDao, cinemaInfo)
+                    cinemaInfo
+                })
+                .subscribe({ t ->
+                    cinemaDao.insertCinema(t)
+                }, { t ->
+                    t.printStackTrace()
+                    info { "error: ${t.localizedMessage}" }
+                    cinemaDao.insertCinema(cinemaInfo)
+                }, {
+                    imagesLoading.postValue(false)
+                    videosLoading.postValue(false)
+                })
+        )
     }
 
     private fun saveVideos(
@@ -161,13 +201,13 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
     }
 
     private fun saveCinemaInfo(
-        t1: Response<MovieDetails>,
+        t1: Response<out BaseCinemaDetail>,
         cinemaInfo: CinemaInfo
     ) {
         if (t1.isSuccessful) {
             val body = t1.body()
-            cinemaInfo.homePageLink = body?.homepage
-            cinemaInfo.runTimeMinutes = body?.runtime ?: 0
+            cinemaInfo.homePageLink = body?.homepage()
+            cinemaInfo.runTimeMinutes = body?.runtime() ?: 0
         } else {
 
         }
