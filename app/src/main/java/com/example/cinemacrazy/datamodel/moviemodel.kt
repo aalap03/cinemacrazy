@@ -71,7 +71,7 @@ data class TrendingMovie(
     var voteCount: Long = 0,
     @SerializedName("genre_ids")
     @Expose
-    var genreIds: ArrayList<Int> = arrayListOf()
+    var genreIds: ArrayList<Long> = arrayListOf()
 
 ) : BaseMedia, Parcelable {
     override fun mediaType(): String {
@@ -94,7 +94,7 @@ data class TrendingMovie(
         return posterPath
     }
 
-    override fun genreIds(): ArrayList<Int> {
+    override fun genreIds(): ArrayList<Long> {
         return genreIds
     }
 
@@ -140,7 +140,7 @@ data class TrendingTv(
     var firstAirDate: String = "",
     @SerializedName("genre_ids")
     @Expose
-    var genreIds: ArrayList<Int> = arrayListOf(),
+    var genreIds: ArrayList<Long> = arrayListOf(),
 
     @SerializedName("overview")
     @Expose
@@ -166,7 +166,7 @@ data class TrendingTv(
         return posterPath
     }
 
-    override fun genreIds(): ArrayList<Int> {
+    override fun genreIds(): ArrayList<Long> {
         return genreIds
     }
 
@@ -199,7 +199,7 @@ interface BaseMedia {
 
     fun posterPath(): String?
 
-    fun genreIds(): ArrayList<Int>
+    fun genreIds(): ArrayList<Long>
 
     fun voteCount(): Long
 
@@ -210,10 +210,7 @@ interface BaseMedia {
     fun overView(): String
 }
 
-data class Movie(
-    @SerializedName("backdrop_path")
-    @Expose
-    var backdropPath: String? = null,
+data class MovieDetails(
     @SerializedName("genres")
     @Expose
     var genres: ArrayList<Genre> = arrayListOf(),
@@ -223,30 +220,24 @@ data class Movie(
     @SerializedName("id")
     @Expose
     var id: Int? = 0,
-    @SerializedName("original_title")
-    @Expose
-    var originalTitle: String? = null,
-    @SerializedName("overview")
-    @Expose
-    var overview: String? = null,
-    @SerializedName("popularity")
-    @Expose
-    var popularity: Double = 0.0,
-    @SerializedName("poster_path")
-    @Expose
-    var posterPath: String? = null,
-    @SerializedName("release_date")
-    @Expose
-    var releaseDate: String? = null,
     @SerializedName("runtime")
     @Expose
-    var runtime: Int? = null,
-    @SerializedName("vote_average")
+    var runtime: Int? = null
+)
+
+data class TvDetails(
+    @SerializedName("episode_run_time")
     @Expose
-    var voteAverage: Double? = null,
-    @SerializedName("vote_count")
+    var listOfRuntimes: ArrayList<Int> = arrayListOf(),
+    @SerializedName("genres")
     @Expose
-    var voteCount: Int? = null
+    var genres: ArrayList<Genre> = arrayListOf(),
+    @SerializedName("homepage")
+    @Expose
+    var homepage: String? = null,
+    @SerializedName("id")
+    @Expose
+    var id: Int? = 0
 )
 
 data class Genre(
@@ -255,11 +246,11 @@ data class Genre(
     var name: String = "",
     @SerializedName("id")
     @Expose
-    var id: Int = 0
+    var id: Long = 0
 )
 
-val CINEMA_TYPE_TV = "cinema_tv"
-val CINEMA_TYPE_MOVIE = "cinema_movie"
+val CINEMA_TYPE_TV = "tv"
+val CINEMA_TYPE_MOVIE = "movie"
 val KEY_CINEMA_TYPE = "cinema_type"
 val KEY_CINEMA_ID = "cinema_type"
 

@@ -28,7 +28,13 @@ interface TmdbService {
     //https://api.themoviedb.org/3/movie/399361?api_key=70ca97bc3cbdc59a4577ea0dbeb9da00
     @GET("movie/{movieId}?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getMovieInfo(@Path("movieId") movieId: Long)
-            : Flowable<Response<Movie>>
+            : Flowable<Response<MovieDetails>>
+
+
+    //https://api.themoviedb.org/3/movie/399361?api_key=70ca97bc3cbdc59a4577ea0dbeb9da00
+    @GET("tv/{tvId}?api_key=${BuildConfig.TMDB_API_KEY}")
+    fun getTvInfo(@Path("tvId") tvId: Long)
+            : Flowable<Response<TvDetails>>
 
     @GET("movie/{movieId}/videos?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getMovieVideos(@Path("movieId") movieId: Long): Flowable<Response<VideoResult>>

@@ -10,20 +10,23 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.cinemacrazy.BaseActivity
 import com.example.cinemacrazy.R
+import com.example.cinemacrazy.application.App
 import com.example.cinemacrazy.datamodel.*
 import com.example.cinemacrazy.medialist.MOVIE_DETAIL
 import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.media_detail_screen.*
 import org.jetbrains.anko.AnkoLogger
 
 class CinemaDetailScreen : BaseActivity(), AnkoLogger {
 
+    lateinit var app: App
     var movie: TrendingMovie? = null
     var tv: TrendingTv? = null
     var mediaType = ""
     lateinit var baseMedia: BaseMedia
     lateinit var detailsViewModel: CinemaDetailsViewModel
+    lateinit var genres: String
     var imageAdapter = MediaAdapter()
     var videoAdapter = MediaAdapter()
     var serverImageList = arrayListOf<MovieMedia>()
@@ -32,16 +35,28 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        app = App()
+
         recycler_view_images.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recycler_view_images.adapter = imageAdapter
         recycler_view_videos.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recycler_view_videos.adapter = videoAdapter
 
         mediaType = intent.getStringExtra(KEY_CINEMA_TYPE)
-        if (mediaType == CINEMA_TYPE_MOVIE)
+        if (mediaType == CINEMA_TYPE_MOVIE) {
             movie = intent.getParcelableExtra(MOVIE_DETAIL)
-        else
+            val arrayList = movie?.genreIds()
+            arrayList?.let {
+                genres = app.getMoviesGenre(it).toString()
+            }
+        }
+        else {
             tv = intent.getParcelableExtra(MOVIE_DETAIL)
+            val arrayList = tv?.genreIds()
+            arrayList?.let {
+                genres = app.getTvGenres(it).toString()
+            }
+        }
 
         movie?.let { baseMedia = movie as BaseMedia }
         tv?.let { baseMedia = tv as BaseMedia }
@@ -49,16 +64,12 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
         showMediaStoredDetails(baseMedia)
         detailsViewModel = ViewModelProviders.of(this).get(CinemaDetailsViewModel::class.java)
 
-        detailsViewModel.getSavedMoviesDetails(baseMedia.getMediaId(), api, database)
-
-        detailsViewModel.movieInfo.observe(this,
-            Observer<MovieInfo?> {
-                it?.images
-            })
+        detailsViewModel.requestCinemaDetails(baseMedia.getMediaId(), api, database, baseMedia.mediaType())
 
 
     }
 
+    //DONE PART
     private fun showMediaStoredDetails(movie: BaseMedia) {
 
         val displayMetrics = DisplayMetrics()
@@ -78,6 +89,7 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
             .into(movie_image)
 
         movie_overview.text = movie.overView()
+        movie_genre.text = genres
 
     }
 

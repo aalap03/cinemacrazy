@@ -1,25 +1,26 @@
 package com.example.cinemacrazy.datamodel
 
-import androidx.room.ColumnInfo
+import androidx.lifecycle.MutableLiveData
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
+import com.google.gson.Gson
 
 @Entity(tableName = "movie_info")
-data class MovieInfo(
+data class CinemaInfo(
 
     @PrimaryKey
     var id: Long = 0,
+
+    var cinemaType: String = "",
 
     var runTimeMinutes: Int = 0,
 
     var homePageLink: String? = null,
 
-    var genres: MutableList<MediaGenres> = arrayListOf(),
+    var videos: MutableList<VideoPath>? = null,
 
-    var videos: MutableList<VideoPath> = arrayListOf(),
-
-    var images: MutableList<ImagePath> = arrayListOf()
+    var images: MutableList<ImagePath>? = null
 )
 
 @Entity
@@ -36,35 +37,9 @@ data class VideoPath(
     var cinemaId: Long
 )
 
-@Entity
-data class MediaGenres(
-
-    @PrimaryKey
-    var id: Int = 0,
-
-    var genre: String = "",
-    var cinemaId: Long
-)
-
 class Convertors {
 
     companion object {
-        @TypeConverter
-        @JvmStatic
-        fun toGenresString(genres: MutableList<MediaGenres>): String {
-            return genres.joinToString(separator = ",") {
-                "${it.genre}:${it.id}"
-            }
-        }
-
-        @TypeConverter
-        @JvmStatic
-        fun toGenreList(genreString: String): MutableList<MediaGenres> {
-            return genreString.split(",").map {
-                val split = it.split(":")
-                MediaGenres(split[1].toInt(), split[0],0)
-            }.toMutableList()
-        }
 
         @TypeConverter
         @JvmStatic

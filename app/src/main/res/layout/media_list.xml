@@ -11,7 +11,7 @@
     <com.jaredrummler.materialspinner.MaterialSpinner
             android:layout_width="match_parent"
             android:id="@+id/media_selector"
-            android:background="@android:color/transparent"
+            android:backgroundTint="#187AE7"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/recycler_view"
             android:layout_height="?attr/actionBarSize"/>
