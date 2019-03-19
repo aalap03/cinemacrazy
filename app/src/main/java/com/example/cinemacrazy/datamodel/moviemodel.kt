@@ -44,7 +44,7 @@ data class TrendingMovie(
 
     @SerializedName("backdrop_path")
     @Expose
-    var backdropPath: String = "",
+    var backdropPath: String? = null,
     @SerializedName("id")
     @Expose
     var id: Long = 0,
@@ -56,7 +56,7 @@ data class TrendingMovie(
     var overview: String = "",
     @SerializedName("poster_path")
     @Expose
-    var posterPath: String = "",
+    var posterPath: String? = null,
     @SerializedName("release_date")
     @Expose
     var releaseDate: String = "",
@@ -86,11 +86,11 @@ data class TrendingMovie(
         return title
     }
 
-    override fun backdropPath(): String {
+    override fun backdropPath(): String? {
         return backdropPath
     }
 
-    override fun posterPath(): String {
+    override fun posterPath(): String? {
         return posterPath
     }
 
@@ -131,10 +131,10 @@ data class TrendingTv(
     var voteAvrg: Double = 0.0,
     @SerializedName("poster_path")
     @Expose
-    var posterPath: String = "",
+    var posterPath: String? = null,
     @SerializedName("backdrop_path")
     @Expose
-    var backdropPath: String = "",
+    var backdropPath: String? = null,
     @SerializedName("first_air_date")
     @Expose
     var firstAirDate: String = "",
@@ -158,11 +158,11 @@ data class TrendingTv(
         return originalName
     }
 
-    override fun backdropPath(): String {
+    override fun backdropPath(): String? {
         return backdropPath
     }
 
-    override fun posterPath(): String {
+    override fun posterPath(): String? {
         return posterPath
     }
 
