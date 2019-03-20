@@ -1,4 +1,4 @@
-package com.example.cinemacrazy.datamodel
+package com.example.cinemacrazy.datamodel.serverResponses.mediaResponses
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -48,11 +48,3 @@ data class ImageResult(
     @Expose
     var images: MutableList<Image> = arrayListOf()
 )
-
-interface MovieMedia {
-    fun getLinkKey(): String
-    fun mediaType(): String
-}
-
-val IMAGE = "image"
-val VIDEO = "video"

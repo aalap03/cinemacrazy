@@ -4,10 +4,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.cinemacrazy.apiservice.TmdbService
 import com.example.cinemacrazy.application.AppDb
-import com.example.cinemacrazy.datamodel.*
-import com.example.cinemacrazy.datamodel.daos.CinemaDao
-import com.example.cinemacrazy.datamodel.daos.ImagesDao
-import com.example.cinemacrazy.datamodel.daos.VideosDao
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseCinemaDetail
+import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.ImageResult
+import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.MovieMedia
+import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.VideoResult
+import com.example.cinemacrazy.datamodel.room.CinemaInfo
+import com.example.cinemacrazy.datamodel.room.ImagePath
+import com.example.cinemacrazy.datamodel.room.VideoPath
+import com.example.cinemacrazy.datamodel.room.daos.CinemaDao
+import com.example.cinemacrazy.datamodel.room.daos.ImagesDao
+import com.example.cinemacrazy.datamodel.room.daos.VideosDao
+import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Function3
@@ -22,8 +29,8 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
 
     var imagesLoading = MutableLiveData<Boolean>()
     var videosLoading = MutableLiveData<Boolean>()
-    var liveImagePaths = MutableLiveData<MutableList<MovieMedia>>()
-    var liveVideoPaths = MutableLiveData<MutableList<MovieMedia>>()
+    var cinemaImages = MutableLiveData<MutableList<MovieMedia>>()
+    var cinemaVideos = MutableLiveData<MutableList<MovieMedia>>()
 
     var listImageMedia = mutableListOf<MovieMedia>()
     var listVideoMedia = mutableListOf<MovieMedia>()
@@ -67,6 +74,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                     startSaving(cinemaInfo, imagesDao, videoDao, cinemaDao, api.getMovieInfo(cinemaId).map { it })
 
                 } else {
+                    liveCinemaInfo.postValue(dbMovieInfo)
                     lookForImagesAndVideos(dbMovieInfo, imagesDao, videoDao)
                 }
             } else {
@@ -83,6 +91,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                     startSaving(cinemaInfo, imagesDao, videoDao, cinemaDao, tvInfo.map { it })
 
                 } else {
+                    liveCinemaInfo.postValue(dbTvInfo)
                     lookForImagesAndVideos(dbTvInfo, imagesDao, videoDao)
                 }
             }
@@ -102,7 +111,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
             val imagesForCinema = imagesDao.getImagesForCinema(cinemaId, cinemaType)
             if (imagesForCinema?.value?.isNotEmpty() == true) {
                 listImageMedia.addAll(imagesForCinema?.value ?: mutableListOf())
-                liveImagePaths.postValue(listImageMedia)
+                cinemaImages.postValue(listImageMedia)
             } else {
                 imagesLoading.postValue(true)
 
@@ -117,7 +126,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
             }
         } else {
             listImageMedia.addAll(images)
-            liveImagePaths.postValue(listImageMedia)
+            cinemaImages.postValue(listImageMedia)
             imagesLoading.postValue(false)
         }
 
@@ -125,7 +134,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
             val videosForCinema = videoDao.getVideosForCinema(cinemaId, cinemaType)
             if (videosForCinema?.value?.isNotEmpty() == true) {
                 listVideoMedia.addAll(videosForCinema?.value ?: mutableListOf())
-                liveVideoPaths.postValue(listVideoMedia)
+                cinemaVideos.postValue(listVideoMedia)
             } else {
                 videosLoading.postValue(true)
                 compositeDisposable.add(
@@ -139,7 +148,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
             }
         } else {
             listVideoMedia.addAll(videos)
-            liveVideoPaths.postValue(listVideoMedia)
+            cinemaVideos.postValue(listVideoMedia)
             videosLoading.postValue(false)
         }
     }
@@ -168,6 +177,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                 })
                 .subscribe({ t ->
                     cinemaDao.insertCinema(t)
+                    liveCinemaInfo.postValue(t)
                 }, { t ->
                     t.printStackTrace()
                     info { "error: ${t.localizedMessage}" }
@@ -194,7 +204,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
             videoDao.insertVideos(videoPath)
             cinemaInfo.videos = videoPath
             listVideoMedia.addAll(videoPath)
-            liveVideoPaths.postValue(listVideoMedia)
+            cinemaVideos.postValue(listVideoMedia)
         } else {
 
         }
@@ -228,7 +238,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
             imagesDao.insertImages(imagePaths)
             cinemaInfo.images = imagePaths
             listImageMedia.addAll(imagePaths)
-            liveImagePaths.postValue(listImageMedia)
+            cinemaImages.postValue(listImageMedia)
         } else {
 
         }

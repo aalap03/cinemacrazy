@@ -2,8 +2,8 @@ package com.example.cinemacrazy.medialist
 
 import androidx.paging.PageKeyedDataSource
 import com.example.cinemacrazy.apiservice.TmdbService
-import com.example.cinemacrazy.datamodel.BaseMedia
-import com.example.cinemacrazy.datamodel.CINEMA_TYPE_MOVIE
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
+import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
 import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info

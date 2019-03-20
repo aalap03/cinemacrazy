@@ -5,10 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.cinemacrazy.datamodel.*
-import com.example.cinemacrazy.datamodel.daos.ImagesDao
-import com.example.cinemacrazy.datamodel.daos.CinemaDao
-import com.example.cinemacrazy.datamodel.daos.VideosDao
+import com.example.cinemacrazy.datamodel.room.CinemaInfo
+import com.example.cinemacrazy.datamodel.room.Convertors
+import com.example.cinemacrazy.datamodel.room.ImagePath
+import com.example.cinemacrazy.datamodel.room.VideoPath
+import com.example.cinemacrazy.datamodel.room.daos.ImagesDao
+import com.example.cinemacrazy.datamodel.room.daos.CinemaDao
+import com.example.cinemacrazy.datamodel.room.daos.VideosDao
 
 @Database(version = 4, entities = [CinemaInfo::class, ImagePath::class, VideoPath::class])
 @TypeConverters(Convertors::class)

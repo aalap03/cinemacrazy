@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.example.cinemacrazy.apiservice.TmdbService
-import com.example.cinemacrazy.datamodel.BaseMedia
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
 
 class CinemaViewModel : ViewModel() {
 

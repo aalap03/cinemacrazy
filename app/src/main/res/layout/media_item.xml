@@ -1,47 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
-        app:cardUseCompatPadding="true"
-        app:cardElevation="3dp"
-        app:cardCornerRadius="5dp"
-        android:background="@android:color/transparent"
-        android:layout_height="match_parent">
-
-    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ImageView
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
-        <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:src="@drawable/ic_launcher_background"
-                android:id="@+id/movie_poster"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"/>
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:id="@+id/title_container"
-                android:background="@color/colorAccent"
-                android:layout_height="wrap_content">
-
-            <TextView
-                    android:text="Rab ne bana di jode he balle ballle"
-                    android:layout_width="wrap_content"
-                    android:maxLines="1"
-                    style="@style/cinema_text"
-                    android:padding="5dp"
-                    android:ellipsize="end"
-                    android:layout_height="40dp"
-                    android:id="@+id/cinema_title"/>
-        </FrameLayout>
-
-    </LinearLayout>
-
-</androidx.cardview.widget.CardView>
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_launcher_background"
+            android:adjustViewBounds="true"
+            android:id="@+id/movie_poster"/>
+</FrameLayout>
 
 
 

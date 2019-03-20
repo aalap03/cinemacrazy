@@ -11,11 +11,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.cinemacrazy.BaseActivity
 import com.example.cinemacrazy.R
-import com.example.cinemacrazy.application.App
-import com.example.cinemacrazy.datamodel.*
+import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.MovieMedia
+import com.example.cinemacrazy.datamodel.room.CinemaInfo
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.TrendingMovie
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.TrendingTv
+import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
+import com.example.cinemacrazy.datamodel.utils.KEY_CINEMA_TYPE
+import com.example.cinemacrazy.datamodel.utils.TMDB_IMAGE_PATH
 import com.example.cinemacrazy.medialist.MOVIE_DETAIL
 import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.media_detail_screen.*
 import org.jetbrains.anko.AnkoLogger
 
@@ -29,17 +34,48 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
     lateinit var genres: String
     var imageAdapter = MediaAdapter()
     var videoAdapter = MediaAdapter()
-    var serverImageList = arrayListOf<MovieMedia>()
-    var serverVideoList = mutableListOf<MovieMedia>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        recycler_view_images.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recycler_view_images.adapter = imageAdapter
-        recycler_view_videos.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recycler_view_videos.adapter = videoAdapter
 
         mediaType = intent.getStringExtra(KEY_CINEMA_TYPE)
+
+        setMediaRecyclerViews()
+        setGenresText()
+
+        movie?.let { baseMedia = movie as BaseMedia }
+        tv?.let { baseMedia = tv as BaseMedia }
+
+        showMediaStoredDetails(baseMedia)//title,
+        detailsViewModel = ViewModelProviders.of(this).get(CinemaDetailsViewModel::class.java)
+
+        detailsViewModel.requestCinemaDetails(baseMedia.getMediaId(), api, database, baseMedia.mediaType())
+
+        detailsViewModel.liveCinemaInfo.observe(this,
+            Observer<CinemaInfo?> { cinemaInfo ->
+                cinemaInfo?.homePageLink?.let { cinemaHomePage ->
+                    cinema_home_page.visibility = View.VISIBLE
+                    cinema_homepage_heading.visibility = View.VISIBLE
+                    cinema_home_page.text = cinemaHomePage
+                }
+                cinema_runtime.text = cinemaInfo?.runTimeMinutes.toString()
+            })
+
+        detailsViewModel.cinemaImages.observe(
+            this,
+            Observer<MutableList<MovieMedia>?> { t -> imageAdapter.submitList(t) })
+        detailsViewModel.imagesLoading.observe(
+            this,
+            Observer<Boolean?> { image_loading.visibility = if (it == true) View.VISIBLE else View.GONE })
+        detailsViewModel.cinemaVideos.observe(
+            this,
+            Observer<MutableList<MovieMedia>?> { videos -> videoAdapter.submitList(videos) })
+        detailsViewModel.videosLoading.observe(
+            this,
+            Observer<Boolean?> { videos_loading.visibility = if (it == true) View.VISIBLE else View.GONE })
+    }
+
+    private fun setGenresText() {
         if (mediaType == CINEMA_TYPE_MOVIE) {
             movie = intent.getParcelableExtra(MOVIE_DETAIL)
             val arrayList = movie?.genreIds()
@@ -53,34 +89,14 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
                 genres = app.getTvGenres(it).toString()
             }
         }
+        cinema_genre.text = genres.replace("[", "").replace("]", "")
+    }
 
-        movie?.let { baseMedia = movie as BaseMedia }
-        tv?.let { baseMedia = tv as BaseMedia }
-
-        showMediaStoredDetails(baseMedia)
-        detailsViewModel = ViewModelProviders.of(this).get(CinemaDetailsViewModel::class.java)
-
-        detailsViewModel.requestCinemaDetails(baseMedia.getMediaId(), api, database, baseMedia.mediaType())
-
-        detailsViewModel.liveCinemaInfo.observe(this,
-            Observer<CinemaInfo?> { cinemaInfo ->
-                cinema_home_page.text = cinemaInfo?.homePageLink
-                cinema_runtime.text = "Runtime ${cinemaInfo?.runTimeMinutes} Minutes"
-            })
-
-        detailsViewModel.liveImagePaths.observe(this,
-            Observer<MutableList<MovieMedia>?> { t -> imageAdapter.submitList(t) })
-
-        detailsViewModel.liveVideoPaths.observe(this,
-            Observer<MutableList<MovieMedia>?> { videos -> videoAdapter.submitList(videos) })
-
-        detailsViewModel.imagesLoading.observe(this, Observer<Boolean?> {
-            image_loading.visibility = if (it == true) View.VISIBLE else View.GONE
-        })
-
-        detailsViewModel.videosLoading.observe(this, Observer<Boolean?> {
-            videos_loading.visibility = if (it == true) View.VISIBLE else View.GONE
-        })
+    private fun setMediaRecyclerViews() {
+        recycler_view_images.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recycler_view_images.adapter = imageAdapter
+        recycler_view_videos.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recycler_view_videos.adapter = videoAdapter
     }
 
     //DONE PART
@@ -102,8 +118,8 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
             .load(movie.backdropPath()?.TMDB_IMAGE_PATH())
             .into(movie_image)
 
-        movie_overview.text = movie.overView()
-        movie_genre.text = genres.replace("[", "").replace("]", "")
+        cinema_overview.text = movie.overView()
+        cinema_title.text = movie.getName()
     }
 
     override fun getLayoutRes(): Int {

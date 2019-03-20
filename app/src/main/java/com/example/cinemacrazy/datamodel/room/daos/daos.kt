@@ -1,14 +1,13 @@
-package com.example.cinemacrazy.datamodel.daos
+package com.example.cinemacrazy.datamodel.room.daos
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.cinemacrazy.datamodel.ImagePath
-import com.example.cinemacrazy.datamodel.CinemaInfo
-import com.example.cinemacrazy.datamodel.VideoPath
+import com.example.cinemacrazy.datamodel.room.ImagePath
+import com.example.cinemacrazy.datamodel.room.CinemaInfo
+import com.example.cinemacrazy.datamodel.room.VideoPath
 
 @Dao
 interface CinemaDao {

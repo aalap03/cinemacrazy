@@ -1,7 +1,12 @@
 package com.example.cinemacrazy.apiservice
 
 import com.example.cinemacrazy.BuildConfig
-import com.example.cinemacrazy.datamodel.*
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.MovieDetails
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.ResponseMovie
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.ResponseTV
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.TvDetails
+import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.ImageResult
+import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.VideoResult
 import io.reactivex.Flowable
 import retrofit2.Response
 import retrofit2.http.GET

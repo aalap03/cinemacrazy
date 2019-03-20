@@ -1,4 +1,4 @@
-package com.example.cinemacrazy.datamodel
+package com.example.cinemacrazy.datamodel.utils
 
 
 data class MovieGenres(

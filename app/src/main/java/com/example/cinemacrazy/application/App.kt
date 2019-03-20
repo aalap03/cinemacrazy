@@ -2,12 +2,12 @@ package com.example.cinemacrazy.application
 
 import android.app.Application
 import android.content.Context
-import com.example.cinemacrazy.datamodel.*
-import com.example.cinemacrazy.di.modules.ContextModule
-import com.example.cinemacrazy.di.components.DaggerMoviesComponent
+import com.example.cinemacrazy.datamodel.utils.MovieGenres
+import com.example.cinemacrazy.datamodel.utils.TvGenres
+import com.example.cinemacrazy.datamodel.utils.moviesGenre
+import com.example.cinemacrazy.datamodel.utils.tvGenreString
 import com.google.gson.Gson
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 
 class App : Application(), AnkoLogger {
 

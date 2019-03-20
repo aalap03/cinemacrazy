@@ -10,12 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.cinemacrazy.R
-import com.example.cinemacrazy.datamodel.*
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.Context
 import android.net.Uri
-
+import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.IMAGE
+import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.MovieMedia
+import com.example.cinemacrazy.datamodel.utils.TMDB_IMAGE_PATH
+import com.example.cinemacrazy.datamodel.utils.YOUTUBE_THUMBNAIL
+import com.example.cinemacrazy.datamodel.utils.getDrawable
 
 class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : DiffUtil.ItemCallback<MovieMedia>() {
 
@@ -28,7 +31,7 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
     }
 
 }) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder{
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder {
 
         return MediaHolder(LayoutInflater.from(parent.context).inflate(R.layout.simple_image_card_item, parent, false))
     }
@@ -57,7 +60,7 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
                     .applyDefaultRequestOptions(
                         RequestOptions()
                             .placeholder(R.mipmap.ic_launcher_round)
-                            .error(R.drawable.ic_launcher_foreground)
+                            .error(R.drawable.ic_launcher_background)
                     )
                     .load(media.getLinkKey().YOUTUBE_THUMBNAIL())
                     .into(cardImage)

@@ -4,21 +4,16 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cinemacrazy.BaseActivity
 import com.example.cinemacrazy.R
-import com.example.cinemacrazy.application.getColor
-import com.example.cinemacrazy.datamodel.BaseMedia
-import com.example.cinemacrazy.datamodel.CINEMA_TYPE_MOVIE
-import com.example.cinemacrazy.datamodel.CINEMA_TYPE_TV
-import com.example.cinemacrazy.datamodel.getDrawable
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
+import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
+import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_TV
 import kotlinx.android.synthetic.main.media_list.*
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 
 class CinemaListActivity : BaseActivity(), AnkoLogger {
 
@@ -29,18 +24,19 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        supportActionBar?.title = ""
+
+        setRecyclerView()
+        setSpinner()
+
+        viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
+        displayLiveMedia(MEDIA_TYPE, null)
+    }
+
+    fun setRecyclerView() {
         recycler_view.layoutManager = GridLayoutManager(this, 2)
         adapter = MoviesAdapter()
-        supportActionBar?.title = ""
         recycler_view.adapter = adapter
-        setSpinner()
-        viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
-
-
-        info { "Info: ${getList()}" }
-
-
-        displayLiveMedia(MEDIA_TYPE, null)
     }
 
     private fun setSpinner() {
@@ -52,14 +48,6 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
 
     override fun getLayoutRes(): Int {
         return R.layout.media_list
-    }
-
-    private fun displayLiveMedia(mediaType: String, query: String?) {
-        viewmodel.setCurrentMediaType(mediaType)
-        viewmodel.getCurrentMediaType().observe(this, Observer<String> {
-            viewmodel.getMediaLive(api, it, query = query).observe(this,
-                Observer<PagedList<BaseMedia>?> { t -> adapter.submitList(t) })
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -84,28 +72,11 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         return true
     }
 
-    fun test(): String {
-        var list = arrayListOf<Test>()
-        list.add(Test(1, "Aalap1", 1))
-        list.add(Test(2, "Aalap2", 2))
-        list.add(Test(3, "Aalap3", 3))
-        return list.joinToString(separator = ":")
+    private fun displayLiveMedia(mediaType: String, query: String?) {
+        viewmodel.setCurrentMediaType(mediaType)
+        viewmodel.getCurrentMediaType().observe(this, Observer<String> {
+            viewmodel.getMediaLive(api, it, query = query).observe(this,
+                Observer<PagedList<BaseMedia>?> { t -> adapter.submitList(t) })
+        })
     }
-
-    private fun getList(): Int {
-        val test = test()
-        val split = test.split(":")
-        split.forEach {
-            val split1 = it.split(",")
-            info { "Info: inside length ${split.size}" }
-            split1.forEach {
-                info { "Info: inside $it" }
-            }
-        }
-        return split.size
-    }
-
-    data class Test(
-        var id: Int, var genre: String, var int: Long
-    )
 }
