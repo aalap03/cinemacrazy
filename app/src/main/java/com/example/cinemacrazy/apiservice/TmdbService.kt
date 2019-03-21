@@ -20,6 +20,11 @@ interface TmdbService {
     fun getTrendingMovies(@Query("page") pageNum: Long)
             : Flowable<Response<ResponseMovie>>
 
+    //https://api.themoviedb.org/3/movie/latest?api_key=apikey
+    @GET("movie/top_rated?api_key=${BuildConfig.TMDB_API_KEY}&language=en-US")
+    fun getTopRatedMovies(@Query("page") pageNum: Long)
+            : Flowable<Response<ResponseMovie>>
+
     @GET("trending/tv/week?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getTrendingTv(@Query("page") pageNum: Long): Flowable<Response<ResponseTV>>
 

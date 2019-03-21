@@ -9,4 +9,25 @@
             android:icon="@android:drawable/ic_menu_search"
             app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 
+    <group
+            android:id="@+id/items"
+            android:visible="true">
+        <item
+                android:id="@+id/main_menu_sort"
+                android:title="Sort0"/>
+        <item
+                android:id="@+id/main_menu_sort1"
+                android:title="Sort1"/>
+        <item
+                android:id="@+id/main_menu_sort2"
+                android:title="Sort2"/>
+        <item
+                android:id="@+id/main_menu_sort3"
+                android:title="Sort3"/>
+        <item
+                android:id="@+id/main_menu_sort4"
+                android:title="Sort4"/>
+    </group>
+
+
 </menu>

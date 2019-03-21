@@ -38,7 +38,7 @@ class CinemaDataSource(var api: TmdbService, var mediaType: String, private val 
         disposable = if (mediaType == CINEMA_TYPE_MOVIE) {
 
             val flowableMovies = if (query == null)
-                api.getTrendingMovies(pageNum)
+                api.getTopRatedMovies(pageNum)
             else
                 api.getSearchMovies(query, pageNum)
 
@@ -76,8 +76,8 @@ class CinemaDataSource(var api: TmdbService, var mediaType: String, private val 
             }
         }
             .subscribe({ t ->
-                initialCallback?.onResult(t, null, 2)
-                afterCallback?.onResult(t, pageNum + 1)
+                initialCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, null, 2)
+                afterCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, pageNum + 1)
             }, { t ->
                 info { "onError: ${t.localizedMessage}" }
             })

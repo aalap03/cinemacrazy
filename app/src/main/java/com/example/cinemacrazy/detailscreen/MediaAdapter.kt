@@ -81,6 +81,5 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
         } catch (ex: ActivityNotFoundException) {
             context.startActivity(webIntent)
         }
-
     }
 }
