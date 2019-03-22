@@ -2,6 +2,7 @@ package com.example.cinemacrazy.medialist
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -19,7 +20,9 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
 
     lateinit var adapter: MoviesAdapter
     lateinit var viewmodel: CinemaViewModel
-    var MEDIA_TYPE = CINEMA_TYPE_MOVIE
+    var CINEMA_TYPE = CINEMA_TYPE_MOVIE
+    var CINEMA_LIST_TYPE = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +33,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         setSpinner()
 
         viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
-        displayLiveMedia(MEDIA_TYPE, null)
+        displayLiveMedia(CINEMA_TYPE, null, "")
     }
 
     fun setRecyclerView() {
@@ -42,7 +45,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
     private fun setSpinner() {
         media_selector.setItems("Trending Movies", "Trending TV Shows")
         media_selector.setOnItemSelectedListener { _, position, _, _ ->
-            displayLiveMedia(if (position == 0) CINEMA_TYPE_MOVIE else CINEMA_TYPE_TV, null)
+            displayLiveMedia(if (position == 0) CINEMA_TYPE_MOVIE else CINEMA_TYPE_TV, null, CINEMA_LIST_TYPE)
         }
     }
 
@@ -56,7 +59,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         val searchView = (menu?.findItem(R.id.main_menu_search)?.actionView as SearchView)
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                displayLiveMedia(MEDIA_TYPE, query)
+                displayLiveMedia(CINEMA_TYPE, query, CINEMA_LIST_TYPE)
                 return true
             }
 
@@ -66,16 +69,26 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         })
 
         searchView.setOnCloseListener {
-            displayLiveMedia(MEDIA_TYPE, null)
+            displayLiveMedia(CINEMA_TYPE, null, CINEMA_LIST_TYPE)
             false
         }
         return true
     }
 
-    private fun displayLiveMedia(mediaType: String, query: String?) {
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.main_menu_now_playing -> displayLiveMedia(CINEMA_TYPE, null, NOW_PLAYING)
+            R.id.main_menu_upcoming -> displayLiveMedia(CINEMA_TYPE, null, UPCOMING)
+            R.id.main_menu_popular -> displayLiveMedia(CINEMA_TYPE, null, POPULAR)
+            R.id.main_menu_top_rated -> displayLiveMedia(CINEMA_TYPE, null, TOP_RATED)
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun displayLiveMedia(mediaType: String, query: String?, cinemaListType: String) {
         viewmodel.setCurrentMediaType(mediaType)
         viewmodel.getCurrentMediaType().observe(this, Observer<String> {
-            viewmodel.getMediaLive(api, it, query = query).observe(this,
+            viewmodel.getMediaLive(api, it, query = query, cinemaListType = cinemaListType).observe(this,
                 Observer<PagedList<BaseMedia>?> { t -> adapter.submitList(t) })
         })
     }

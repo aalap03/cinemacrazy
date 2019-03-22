@@ -6,9 +6,10 @@ import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMed
 
 class CinemaDataSourceFactory(var api: TmdbService,
                               mediaType: String,
-                              query: String?) : DataSource.Factory<Long, BaseMedia>() {
+                              query: String?,
+                              cinemaListType: String) : DataSource.Factory<Long, BaseMedia>() {
 
-    var mediaDataSource = CinemaDataSource(api, mediaType = mediaType, query = query)
+    var mediaDataSource = CinemaDataSource(api, mediaType = mediaType, query = query, cinemaListType = cinemaListType)
 
     override fun create(): DataSource<Long, BaseMedia> = mediaDataSource
 

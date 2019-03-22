@@ -13,10 +13,10 @@ class CinemaViewModel : ViewModel() {
     lateinit var factory: CinemaDataSourceFactory
     var mutableMediaType = MutableLiveData<String>()
 
-    fun getMediaLive(api: TmdbService, mediaType: String, query: String?): LiveData<PagedList<BaseMedia>> {
+    fun getMediaLive(api: TmdbService, mediaType: String, query: String?, cinemaListType: String): LiveData<PagedList<BaseMedia>> {
 
 
-        factory = CinemaDataSourceFactory(api, mediaType, query)
+        factory = CinemaDataSourceFactory(api, mediaType, query, cinemaListType)
 
         val config = PagedList.Config
             .Builder()

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Cinem@ Cr@zy</string>
+
+    <string name="menu_movie_now_playing">Now Playing</string>
+    <string name="menu_movie_top_rated">Top Rated</string>
+    <string name="menu_movie_popular">Popular</string>
+    <string name="menu_movie_upcoming">Upcoming</string>
+
+
 </resources>

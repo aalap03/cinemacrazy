@@ -3,12 +3,20 @@ package com.example.cinemacrazy.medialist
 import androidx.paging.PageKeyedDataSource
 import com.example.cinemacrazy.apiservice.TmdbService
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.ResponseMovie
 import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
+import io.reactivex.Flowable
 import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import retrofit2.Response
 
-class CinemaDataSource(var api: TmdbService, var mediaType: String, private val query: String?) :
+class CinemaDataSource(
+    var api: TmdbService,
+    var mediaType: String,
+    private val query: String?,
+    var cinemaListType: String
+) :
     PageKeyedDataSource<Long, BaseMedia>(),
     AnkoLogger {
 
@@ -33,12 +41,14 @@ class CinemaDataSource(var api: TmdbService, var mediaType: String, private val 
         afterCallback: LoadCallback<Long, BaseMedia>?
     ) {
 
+        info { "Type: $cinemaListType" }
+
         val list = mutableListOf<BaseMedia>()
 
         disposable = if (mediaType == CINEMA_TYPE_MOVIE) {
 
             val flowableMovies = if (query == null)
-                api.getTopRatedMovies(pageNum)
+                getRespectedMoviesFlowable(pageNum, cinemaListType)
             else
                 api.getSearchMovies(query, pageNum)
 
@@ -83,6 +93,26 @@ class CinemaDataSource(var api: TmdbService, var mediaType: String, private val 
             })
 
     }
+
+    private fun getRespectedMoviesFlowable(pageNum: Long, cinemaListType: String): Flowable<Response<ResponseMovie>> {
+
+        return when (cinemaListType) {
+            "" -> api.getTrendingMovies(pageNum)
+
+            UPCOMING -> api.getTypedMovies(UPCOMING, pageNum)
+
+            TOP_RATED -> api.getTypedMovies(TOP_RATED, pageNum)
+
+            NOW_PLAYING -> api.getTypedMovies(NOW_PLAYING, pageNum)
+
+            POPULAR -> api.getTypedMovies(POPULAR, pageNum)
+
+            else -> throw RuntimeException("Invalid request")
+        }
+
+
+    }
+
 
     fun clear() {
         disposable?.dispose()
