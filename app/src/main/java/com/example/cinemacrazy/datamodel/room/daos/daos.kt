@@ -15,8 +15,11 @@ interface CinemaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCinema(cinemaInfo: CinemaInfo)
 
-    @Query("SELECT * FROM movie_info WHERE id = :movieId & cinemaType =:cinemaType")
+    @Query("SELECT * FROM movie_info WHERE id = :movieId AND cinemaType = :cinemaType")
     fun getCinema(movieId: Long, cinemaType: String): CinemaInfo?
+
+    @Query("SELECT * FROM movie_info")
+    fun getAllCinema(): MutableList<CinemaInfo>
 }
 
 @Dao
@@ -27,6 +30,9 @@ interface ImagesDao {
 
     @Query("SELECT * FROM ImagePath WHERE cinemaId = :cinemaId & cinemaType =:cinemaType")
     fun getImagesForCinema(cinemaId: Long, cinemaType: String): LiveData<MutableList<ImagePath>>?
+
+    @Query("SELECT * FROM ImagePath")
+    fun getAllImages(): MutableList<ImagePath>
 }
 
 @Dao
@@ -37,4 +43,7 @@ interface VideosDao {
 
     @Query("SELECT * FROM VideoPath WHERE cinemaId = :cinemaId & cinemaType =:cinemaType")
     fun getVideosForCinema(cinemaId: Long, cinemaType: String): LiveData<MutableList<VideoPath>>?
+
+    @Query("SELECT * FROM VideoPath")
+    fun getAllVideos(): MutableList<VideoPath>
 }

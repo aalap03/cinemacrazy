@@ -10,11 +10,15 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.cinemacrazy.BaseActivity
 import com.example.cinemacrazy.R
+import com.example.cinemacrazy.application.App
+import com.example.cinemacrazy.application.AppDb
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
 import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
 import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_TV
 import kotlinx.android.synthetic.main.media_list.*
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
+import kotlin.concurrent.thread
 
 class CinemaListActivity : BaseActivity(), AnkoLogger {
 
@@ -34,6 +38,22 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
 
         viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
         displayLiveMedia(CINEMA_TYPE, null, "")
+
+        test()
+    }
+
+    private fun test() {
+        thread {
+            val cinemaDao = AppDb.getDB(this.applicationContext).cinemaDao()
+            val imagesDao = AppDb.getDB(this.applicationContext).imagesDao()
+            val videosDao = AppDb.getDB(this.applicationContext).videosDao()
+            info { "Cinema: $CINEMA_TYPE_MOVIE ${cinemaDao.getCinema(335983, CINEMA_TYPE_MOVIE)}" }
+            cinemaDao.getAllCinema().forEach {
+                info { "Saved-> $it" }
+            }
+            info { imagesDao.getAllImages().size }
+            info { videosDao.getAllVideos().size }
+        }
     }
 
     fun setRecyclerView() {

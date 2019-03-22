@@ -65,6 +65,8 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
 
                 if (dbMovieInfo == null) {
 
+                    info { "Movie null" }
+
                     imagesLoading.postValue(true)
                     videosLoading.postValue(true)
 
@@ -74,6 +76,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                     startSaving(cinemaInfo, imagesDao, videoDao, cinemaDao, api.getMovieInfo(cinemaId).map { it })
 
                 } else {
+                    info { "movie found" }
                     liveCinemaInfo.postValue(dbMovieInfo)
                     lookForImagesAndVideos(dbMovieInfo, imagesDao, videoDao)
                 }
@@ -108,9 +111,10 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
         val videos = dbMovieInfo.videos
 
         if (images == null) {
+            info { "Images null" }
             val imagesForCinema = imagesDao.getImagesForCinema(cinemaId, cinemaType)
             if (imagesForCinema?.value?.isNotEmpty() == true) {
-                listImageMedia.addAll(imagesForCinema?.value ?: mutableListOf())
+                listImageMedia.addAll(imagesForCinema.value ?: mutableListOf())
                 cinemaImages.postValue(listImageMedia)
             } else {
                 imagesLoading.postValue(true)
@@ -118,6 +122,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                 compositeDisposable.add(
                     (if (cinemaType == CINEMA_TYPE_MOVIE) api.getMovieImages(cinemaId) else api.getTvImages(cinemaId))
                         .subscribe({ t ->
+                            info { "saving images" }
                             saveImages(t, imagesDao, dbMovieInfo)
                         }, { t ->
                             info { "error: while getting images ${t.localizedMessage}" }
@@ -131,9 +136,10 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
         }
 
         if (videos == null) {
+            info { "videos null" }
             val videosForCinema = videoDao.getVideosForCinema(cinemaId, cinemaType)
             if (videosForCinema?.value?.isNotEmpty() == true) {
-                listVideoMedia.addAll(videosForCinema?.value ?: mutableListOf())
+                listVideoMedia.addAll(videosForCinema.value ?: mutableListOf())
                 cinemaVideos.postValue(listVideoMedia)
             } else {
                 videosLoading.postValue(true)
@@ -147,6 +153,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                 )
             }
         } else {
+            info { "videos found." }
             listVideoMedia.addAll(videos)
             cinemaVideos.postValue(listVideoMedia)
             videosLoading.postValue(false)
@@ -176,6 +183,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
                     cinemaInfo
                 })
                 .subscribe({ t ->
+                    info { "Movie saved $t" }
                     cinemaDao.insertCinema(t)
                     liveCinemaInfo.postValue(t)
                 }, { t ->
@@ -235,6 +243,7 @@ class CinemaDetailsViewModel : ViewModel(), AnkoLogger {
             imageResult?.images?.forEach {
                 imagePaths.add(ImagePath(it.filePath, cinemaId, cinemaType))
             }
+            info { "images saved" }
             imagesDao.insertImages(imagePaths)
             cinemaInfo.images = imagePaths
             listImageMedia.addAll(imagePaths)
