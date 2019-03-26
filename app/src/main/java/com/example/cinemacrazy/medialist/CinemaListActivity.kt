@@ -3,11 +3,17 @@ package com.example.cinemacrazy.medialist
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.GridLayoutManager
+import co.zsmb.materialdrawerkt.builders.DrawerBuilderKt
+import co.zsmb.materialdrawerkt.builders.drawer
+import co.zsmb.materialdrawerkt.draweritems.badgeable.primaryItem
+import co.zsmb.materialdrawerkt.draweritems.badgeable.secondaryItem
+import co.zsmb.materialdrawerkt.draweritems.divider
 import com.example.cinemacrazy.BaseActivity
 import com.example.cinemacrazy.R
 import com.example.cinemacrazy.application.App
@@ -15,6 +21,12 @@ import com.example.cinemacrazy.application.AppDb
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
 import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
 import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_TV
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.DividerDrawerItem
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import kotlinx.android.synthetic.main.media_list.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -26,48 +38,56 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
     lateinit var viewmodel: CinemaViewModel
     var CINEMA_TYPE = CINEMA_TYPE_MOVIE
     var CINEMA_LIST_TYPE = ""
+    lateinit var drawer: Drawer
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setSupportActionBar(cinema_list_toolbar)
+        drawer = DrawerBuilderKt(this)
+            .builder
+            .withToolbar(cinema_list_toolbar)
+            .build()
+        setupDrawer()
+
         supportActionBar?.title = ""
 
         setRecyclerView()
-        setSpinner()
+        //setSpinner()
 
         viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
         displayLiveMedia(CINEMA_TYPE, null, "")
 
-        test()
     }
 
-    private fun test() {
-        thread {
-            val cinemaDao = AppDb.getDB(this.applicationContext).cinemaDao()
-            val imagesDao = AppDb.getDB(this.applicationContext).imagesDao()
-            val videosDao = AppDb.getDB(this.applicationContext).videosDao()
-            info { "Cinema: $CINEMA_TYPE_MOVIE ${cinemaDao.getCinema(335983, CINEMA_TYPE_MOVIE)}" }
-            cinemaDao.getAllCinema().forEach {
-                info { "Saved-> $it" }
-            }
-            info { imagesDao.getAllImages().size }
-            info { videosDao.getAllVideos().size }
-        }
+    private fun setupDrawer() {
+
+        drawer.addItems(
+            PrimaryDrawerItem().withName("Aalap"),
+            SecondaryDrawerItem().withName("Ankita").withOnDrawerItemClickListener(object: Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*, *>?): Boolean {
+
+                    return true
+                }
+            }),
+            DividerDrawerItem(),
+            SecondaryDrawerItem().withName("Ankita")
+        )
     }
 
-    fun setRecyclerView() {
+    private fun setRecyclerView() {
         recycler_view.layoutManager = GridLayoutManager(this, 2)
         adapter = MoviesAdapter()
         recycler_view.adapter = adapter
     }
 
-    private fun setSpinner() {
-        media_selector.setItems("Trending Movies", "Trending TV Shows")
-        media_selector.setOnItemSelectedListener { _, position, _, _ ->
-            displayLiveMedia(if (position == 0) CINEMA_TYPE_MOVIE else CINEMA_TYPE_TV, null, CINEMA_LIST_TYPE)
-        }
-    }
+//    private fun setSpinner() {
+//        media_selector.setItems("Trending Movies", "Trending TV Shows")
+//        media_selector.setOnItemSelectedListener { _, position, _, _ ->
+//            displayLiveMedia(if (position == 0) CINEMA_TYPE_MOVIE else CINEMA_TYPE_TV, null, CINEMA_LIST_TYPE)
+//        }
+//    }
 
     override fun getLayoutRes(): Int {
         return R.layout.media_list

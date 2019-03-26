@@ -9,17 +9,16 @@
         android:background="@drawable/gradient"
         tools:context=".medialist.CinemaListActivity">
 
-    <com.jaredrummler.materialspinner.MaterialSpinner
+    <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            app:ms_background_color="@android:color/transparent"
-            android:id="@+id/media_selector"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_height="?attr/actionBarSize"/>
+            android:id="@+id/cinema_list_toolbar"
+            android:layout_height="wrap_content"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:id="@+id/recycler_view"
-            app:layout_constraintTop_toBottomOf="@+id/media_selector"
+            app:layout_constraintTop_toBottomOf="@+id/cinema_list_toolbar"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_height="0dp"/>
 

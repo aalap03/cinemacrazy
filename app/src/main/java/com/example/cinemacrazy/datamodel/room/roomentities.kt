@@ -8,7 +8,6 @@ import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.IMAGE
 import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.MovieMedia
 import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.VIDEO
 import com.google.gson.Gson
-import java.lang.reflect.Type
 import com.google.gson.reflect.TypeToken
 
 
