@@ -9,23 +9,4 @@
             android:icon="@android:drawable/ic_menu_search"
             app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 
-    <group
-            android:id="@+id/items"
-            android:visible="true">
-
-        <item
-                android:id="@+id/main_menu_now_playing"
-                android:title="@string/menu_movie_now_playing"/>
-        <item
-                android:id="@+id/main_menu_popular"
-                android:title="@string/menu_movie_popular"/>
-        <item
-                android:id="@+id/main_menu_top_rated"
-                android:title="@string/menu_movie_top_rated"/>
-        <item
-                android:id="@+id/main_menu_upcoming"
-                android:title="@string/menu_movie_upcoming"/>
-    </group>
-
-
 </menu>

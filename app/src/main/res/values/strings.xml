@@ -1,10 +1,18 @@
 <resources>
     <string name="app_name">Cinem@ Cr@zy</string>
 
-    <string name="menu_movie_now_playing">Now Playing</string>
-    <string name="menu_movie_top_rated">Top Rated</string>
-    <string name="menu_movie_popular">Popular</string>
-    <string name="menu_movie_upcoming">Upcoming</string>
+    <string name="movie_trending">Trending Movie</string>
+    <string name="movie_upcoming">Upcoming</string>
+    <string name="movie_now_playing">Now Playing</string>
+    <string name="movie_top_rated">Top Rated</string>
+    <string name="movie_popular">Popular</string>
+
+    <string name="tv_trending">Trending TV Series</string>
+    <string name="tv_airing_today">Airing Today</string>
+    <string name="tv_latest">Latest</string>
+    <string name="tv_top_rated">Top Rated</string>
+    <string name="tv_popular">Popular</string>
+
     <string name="title_activity_navigation">Navigation</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
