@@ -133,10 +133,41 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
             withName(name)
             withIdentifier(identifier)
             withOnDrawerItemClickListener { view, position, drawerItem ->
-                info { "Item: identifier ${drawerItem.identifier}" }
-                info { "Item: position $position" }
-             false
+
+                val cinemaListType = getCinemaListTypeFromDrawableOnClick(drawerItem.identifier)
+                val cinemaType = getCinemaTypeFromDrawableOnClick(position)
+
+                info { "Item: listType $cinemaListType" }
+                info { "Item: cinemaType $cinemaType" }
+
+                displayLiveMedia(cinemaType, null, cinemaListType)
+                false
             }
+        }
+    }
+
+    private fun getCinemaTypeFromDrawableOnClick(fromPosition: Int): String {
+        return if (fromPosition > 7) {
+            CINEMA_TYPE_TV
+        } else {
+            CINEMA_TYPE_MOVIE
+        }
+    }
+
+    private fun getCinemaListTypeFromDrawableOnClick(fromIdentidier: Long): String {
+        return when (fromIdentidier) {
+            TRENDING_MOVIE -> MOVIE_CINEMALIST_TRENDING
+            NOW_PLAYING_MOVIE -> MOVIE_CINEMALIST_NOW_PLAYING
+            POPULAR_MOVIE -> MOVIE_CINEMALIST_POPULAR
+            TOP_RATED_MOVIE -> MOVIE_CINEMALIST_TOP_RATED
+            UPCOMING_MOVIE -> MOVIE_CINEMALIST_UPCOMING
+
+            TRENDING_TV -> TV_CINEMALIST_TRENDING
+            LATEST_TV -> TV_CINEMALIST_LATEST
+            POPULAR_TV -> TV_CINEMALIST_POPULAR
+            TOP_RATED_TV -> TV_CINEMALIST_TOP_RATED
+            AIRING_TODAY_TV -> TV_CINEMALIST_AIRING_TODAY
+            else -> "Invalid"
         }
     }
 }

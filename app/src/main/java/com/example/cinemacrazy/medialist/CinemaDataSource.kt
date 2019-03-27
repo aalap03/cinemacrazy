@@ -5,7 +5,9 @@ import com.example.cinemacrazy.apiservice.TmdbService
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.ResponseMovie
 import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
+import com.example.cinemacrazy.datamodel.utils.TRENDING_MOVIE
 import io.reactivex.Flowable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -20,7 +22,7 @@ class CinemaDataSource(
     PageKeyedDataSource<Long, BaseMedia>(),
     AnkoLogger {
 
-    private var disposable: Disposable? = null
+    private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun loadInitial(params: LoadInitialParams<Long>, callback: LoadInitialCallback<Long, BaseMedia>) {
         getBaseMediaResponse(api, 1, callback, null)
@@ -45,8 +47,9 @@ class CinemaDataSource(
 
         val list = mutableListOf<BaseMedia>()
 
-        disposable = if (mediaType == CINEMA_TYPE_MOVIE) {
+        compositeDisposable.add(if (mediaType == CINEMA_TYPE_MOVIE) {
 
+            info { "Item: Movie-> $cinemaListType" }
             val flowableMovies = if (query == null)
                 getRespectedMoviesFlowable(pageNum, cinemaListType)
             else
@@ -67,6 +70,7 @@ class CinemaDataSource(
             }
         } else {
 
+            info { "Item: TV-> $cinemaListType" }
             val flowableTv = if (query == null)
                 api.getTrendingTv(pageNum)
             else
@@ -91,6 +95,7 @@ class CinemaDataSource(
             }, { t ->
                 info { "onError: ${t.localizedMessage}" }
             })
+        )
 
     }
 
@@ -115,6 +120,7 @@ class CinemaDataSource(
 
 
     fun clear() {
-        disposable?.dispose()
+        info { "Item: cleaning-> $cinemaListType" }
+        compositeDisposable.clear()
     }
 }

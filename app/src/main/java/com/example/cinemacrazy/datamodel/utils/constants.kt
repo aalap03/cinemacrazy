@@ -24,5 +24,20 @@ const val TOP_RATED_TV = 9L
 const val AIRING_TODAY_TV = 10L
 
 
+const val MOVIE_CINEMALIST_TRENDING = "trending"
+const val MOVIE_CINEMALIST_NOW_PLAYING = "now_playing"
+const val MOVIE_CINEMALIST_POPULAR = "popular"
+const val MOVIE_CINEMALIST_TOP_RATED = "top_rated"
+const val MOVIE_CINEMALIST_UPCOMING = "upcoming"
+
+
+const val TV_CINEMALIST_TRENDING = "trending"
+const val TV_CINEMALIST_LATEST = "latest"
+const val TV_CINEMALIST_POPULAR = "popular"
+const val TV_CINEMALIST_TOP_RATED = "top_rated"
+const val TV_CINEMALIST_AIRING_TODAY = "airing_today"
+
+
+
 
 

@@ -18,6 +18,8 @@ class CinemaViewModel : ViewModel() {
 
         factory = CinemaDataSourceFactory(api, mediaType, query, cinemaListType)
 
+        clearPreviousRequest()
+
         val config = PagedList.Config
             .Builder()
             .setEnablePlaceholders(true)
