@@ -16,8 +16,8 @@ import com.example.cinemacrazy.datamodel.room.CinemaInfo
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.TrendingMovie
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.TrendingTv
-import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
-import com.example.cinemacrazy.datamodel.utils.KEY_CINEMA_TYPE
+import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_MOVIE
+import com.example.cinemacrazy.datamodel.utils.constant.KEY_CINEMA_TYPE
 import com.example.cinemacrazy.datamodel.utils.TMDB_IMAGE_PATH
 import com.example.cinemacrazy.medialist.MOVIE_DETAIL
 import com.google.android.material.appbar.CollapsingToolbarLayout

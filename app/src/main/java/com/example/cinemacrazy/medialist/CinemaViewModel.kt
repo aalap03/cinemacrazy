@@ -15,10 +15,7 @@ class CinemaViewModel : ViewModel() {
 
     fun getMediaLive(api: TmdbService, mediaType: String, query: String?, cinemaListType: String): LiveData<PagedList<BaseMedia>> {
 
-
         factory = CinemaDataSourceFactory(api, mediaType, query, cinemaListType)
-
-        clearPreviousRequest()
 
         val config = PagedList.Config
             .Builder()

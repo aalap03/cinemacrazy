@@ -1,7 +1,7 @@
 package com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses
 
 import android.os.Parcelable
-import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
+import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_MOVIE
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize

@@ -15,33 +15,31 @@ import retrofit2.http.Query
 
 interface TmdbService {
 
-    //https://api.themoviedb.org/3/trending/all/day?api_key=70ca97bc3cbdc59a4577ea0dbeb9da00
     @GET("trending/movie/week?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getTrendingMovies(@Query("page") pageNum: Long)
             : Flowable<Response<ResponseMovie>>
 
-    //https://api.themoviedb.org/3/movie/latest?api_key=apikey
     @GET("movie/{type}?api_key=${BuildConfig.TMDB_API_KEY}&language=en-US")
     fun getTypedMovies(@Path("type") type: String, @Query("page") pageNum: Long)
             : Flowable<Response<ResponseMovie>>
 
+    @GET("tv/{type}?api_key=${BuildConfig.TMDB_API_KEY}&language=en-US")
+    fun getTypedTv(@Path("type") type: String, @Query("page") pageNum: Long)
+            : Flowable<Response<ResponseTV>>
+
     @GET("trending/tv/week?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getTrendingTv(@Query("page") pageNum: Long): Flowable<Response<ResponseTV>>
 
-    //https://api.themoviedb.org/3/search/tv?api_key=70ca97bc3cbdc59a4577ea0dbeb9da00&language=en-US&page=1&query=night
     @GET("search/movie?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getSearchMovies(@Query("query") query: String, @Query("page") pageNum: Long): Flowable<Response<ResponseMovie>>
 
     @GET("search/tv?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getSearchTV(@Query("query") query: String, @Query("page") pageNum: Long): Flowable<Response<ResponseTV>>
 
-    //https://api.themoviedb.org/3/movie/399361?api_key=70ca97bc3cbdc59a4577ea0dbeb9da00
     @GET("movie/{movieId}?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getMovieInfo(@Path("movieId") movieId: Long)
             : Flowable<Response<MovieDetails>>
 
-
-    //https://api.themoviedb.org/3/movie/399361?api_key=70ca97bc3cbdc59a4577ea0dbeb9da00
     @GET("tv/{tvId}?api_key=${BuildConfig.TMDB_API_KEY}")
     fun getTvInfo(@Path("tvId") tvId: Long)
             : Flowable<Response<TvDetails>>

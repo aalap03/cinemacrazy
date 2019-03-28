@@ -1,14 +1,14 @@
 package com.example.cinemacrazy.medialist
 
 import androidx.paging.PageKeyedDataSource
-import com.example.cinemacrazy.apiservice.TmdbService
+import com.example.cinemacrazy.apiservice.*
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.ResponseMovie
-import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
-import com.example.cinemacrazy.datamodel.utils.TRENDING_MOVIE
+import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.ResponseTV
+import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.API_CINEMALIST_TRENDING
+import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_MOVIE
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import retrofit2.Response
@@ -72,7 +72,7 @@ class CinemaDataSource(
 
             info { "Item: TV-> $cinemaListType" }
             val flowableTv = if (query == null)
-                api.getTrendingTv(pageNum)
+                getRespectedTvFlowable(pageNum, cinemaListType)
             else
                 api.getSearchTV(query, pageNum)
 
@@ -80,7 +80,6 @@ class CinemaDataSource(
                 if (t.isSuccessful) {
                     val moviesResponse = t.body()
                     list.addAll(moviesResponse?.tvs ?: arrayListOf())
-                    info { "result: ${list.size}" }
                     list
                 } else {
                     throw RuntimeException(t.errorBody()?.string())
@@ -93,6 +92,7 @@ class CinemaDataSource(
                 initialCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, null, 2)
                 afterCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, pageNum + 1)
             }, { t ->
+                t.printStackTrace()
                 info { "onError: ${t.localizedMessage}" }
             })
         )
@@ -100,27 +100,26 @@ class CinemaDataSource(
     }
 
     private fun getRespectedMoviesFlowable(pageNum: Long, cinemaListType: String): Flowable<Response<ResponseMovie>> {
+        info { "cinemaListType: Movie->$cinemaListType" }
 
-        return when (cinemaListType) {
-            "" -> api.getTrendingMovies(pageNum)
+        return if (cinemaListType.equals(API_CINEMALIST_TRENDING, true))
+            api.getTrendingMovies(pageNum)
+        else
+            api.getTypedMovies(cinemaListType, pageNum)
+    }
 
-            UPCOMING -> api.getTypedMovies(UPCOMING, pageNum)
 
-            TOP_RATED -> api.getTypedMovies(TOP_RATED, pageNum)
-
-            NOW_PLAYING -> api.getTypedMovies(NOW_PLAYING, pageNum)
-
-            POPULAR -> api.getTypedMovies(POPULAR, pageNum)
-
-            else -> throw RuntimeException("Invalid request")
-        }
-
+    private fun getRespectedTvFlowable(pageNum: Long, cinemaListType: String): Flowable<Response<ResponseTV>> {
+        info { "cinemaListType: TV->$cinemaListType" }
+        return if (cinemaListType.equals(API_CINEMALIST_TRENDING, true))
+            api.getTrendingTv(pageNum)
+        else
+            api.getTypedTv(cinemaListType, pageNum)
 
     }
 
 
     fun clear() {
-        info { "Item: cleaning-> $cinemaListType" }
         compositeDisposable.clear()
     }
 }

@@ -1,0 +1,14 @@
+package com.example.cinemacrazy.datamodel.utils.constant
+
+const val IDENTIFIER_TRENDING_MOVIE = 1L
+const val IDENTIFIER_NOW_PLAYING_MOVIE = 2L
+const val IDENTIFIER_POPULAR_MOVIE = 3L
+const val IDENTIFIER_TOP_RATED_MOVIE = 4L
+const val IDENTIFIER_UPCOMING_MOVIE = 5L
+
+
+const val IDENTIFIER_TRENDING_TV = 6L
+const val IDENTIFIER_LATEST_TV = 7L
+const val IDENTIFIER_POPULAR_TV = 8L
+const val IDENTIFIER_TOP_RATED_TV = 9L
+const val IDENTIFIER_AIRING_TODAY_TV = 10L

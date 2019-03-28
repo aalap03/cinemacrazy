@@ -13,9 +13,9 @@ import com.example.cinemacrazy.detailscreen.CinemaDetailScreen
 import org.jetbrains.anko.AnkoLogger
 import androidx.paging.PagedListAdapter
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.*
-import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
-import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_TV
-import com.example.cinemacrazy.datamodel.utils.KEY_CINEMA_TYPE
+import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_MOVIE
+import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_TV
+import com.example.cinemacrazy.datamodel.utils.constant.KEY_CINEMA_TYPE
 import com.example.cinemacrazy.datamodel.utils.TMDB_IMAGE_PATH
 
 val MOVIE_DETAIL = "movie_details"

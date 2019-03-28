@@ -11,7 +11,14 @@ import co.zsmb.materialdrawerkt.builders.DrawerBuilderKt
 import com.example.cinemacrazy.BaseActivity
 import com.example.cinemacrazy.R
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
-import com.example.cinemacrazy.datamodel.utils.*
+import com.example.cinemacrazy.datamodel.utils.constant.*
+import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.API_MOVIE_CINEMALIST_NOW_PLAYING
+import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.API_CINEMALIST_POPULAR
+import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.API_CINEMALIST_TOP_RATED
+import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.API_CINEMALIST_TRENDING
+import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.API_MOVIE_CINEMALIST_UPCOMING
+import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.API_TV_CINEMALIST_AIRING_TODAY
+import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.API_TV_CINEMALIST_LATEST
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.model.ExpandableDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -27,7 +34,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
     var CINEMA_TYPE = CINEMA_TYPE_MOVIE
     var CINEMA_LIST_TYPE = ""
     lateinit var drawer: Drawer
-
+    var currentSelectedIdentifier = 1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +46,13 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
             .withDisplayBelowStatusBar(true)
             .withActionBarDrawerToggleAnimated(true)
             .build()
+
         addDrawerItems()
 
         setRecyclerView()
 
         viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
-        displayLiveMedia(CINEMA_TYPE, null, "")
+        displayLiveMedia(CINEMA_TYPE, null, API_CINEMALIST_TRENDING)
 
     }
 
@@ -81,6 +89,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
     }
 
     private fun displayLiveMedia(mediaType: String, query: String?, cinemaListType: String) {
+        info { "displayLiveMedia: $mediaType->$cinemaListType" }
         viewmodel.setCurrentMediaType(mediaType)
         viewmodel.getCurrentMediaType().observe(this, Observer<String> {
             viewmodel.getMediaLive(api, it, query = query, cinemaListType = cinemaListType).observe(this,
@@ -108,22 +117,52 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         drawer.addItem(ExpandableDrawerItem().apply {
             withName("Movies")
             withSubItems(
-                getSecondaryItemWithName(getString(R.string.movie_trending), TRENDING_MOVIE),
-                getSecondaryItemWithName(getString(R.string.movie_now_playing), NOW_PLAYING_MOVIE),
-                getSecondaryItemWithName(getString(R.string.movie_popular), POPULAR_MOVIE),
-                getSecondaryItemWithName(getString(R.string.movie_top_rated), TOP_RATED_MOVIE),
-                getSecondaryItemWithName(getString(R.string.movie_upcoming), UPCOMING_MOVIE)
+                getSecondaryItemWithName(
+                    getString(R.string.movie_trending),
+                    IDENTIFIER_TRENDING_MOVIE
+                ),
+                getSecondaryItemWithName(
+                    getString(R.string.movie_now_playing),
+                    IDENTIFIER_NOW_PLAYING_MOVIE
+                ),
+                getSecondaryItemWithName(
+                    getString(R.string.movie_popular),
+                    IDENTIFIER_POPULAR_MOVIE
+                ),
+                getSecondaryItemWithName(
+                    getString(R.string.movie_top_rated),
+                    IDENTIFIER_TOP_RATED_MOVIE
+                ),
+                getSecondaryItemWithName(
+                    getString(R.string.movie_upcoming),
+                    IDENTIFIER_UPCOMING_MOVIE
+                )
             )
         })
 
         drawer.addItem(ExpandableDrawerItem().apply {
             withName("TV")
             withSubItems(
-                getSecondaryItemWithName(getString(R.string.tv_trending), TRENDING_TV),
-                getSecondaryItemWithName(getString(R.string.tv_latest), LATEST_TV),
-                getSecondaryItemWithName(getString(R.string.tv_popular), POPULAR_TV),
-                getSecondaryItemWithName(getString(R.string.tv_top_rated), TOP_RATED_TV),
-                getSecondaryItemWithName(getString(R.string.tv_airing_today), AIRING_TODAY_TV)
+                getSecondaryItemWithName(
+                    getString(R.string.tv_trending),
+                    IDENTIFIER_TRENDING_TV
+                ),
+                getSecondaryItemWithName(
+                    getString(R.string.tv_latest),
+                    IDENTIFIER_LATEST_TV
+                ),
+                getSecondaryItemWithName(
+                    getString(R.string.tv_popular),
+                    IDENTIFIER_POPULAR_TV
+                ),
+                getSecondaryItemWithName(
+                    getString(R.string.tv_top_rated),
+                    IDENTIFIER_TOP_RATED_TV
+                ),
+                getSecondaryItemWithName(
+                    getString(R.string.tv_airing_today),
+                    IDENTIFIER_AIRING_TODAY_TV
+                )
             )
         })
     }
@@ -131,23 +170,24 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
     private fun getSecondaryItemWithName(name: String, identifier: Long): SecondaryDrawerItem {
         return SecondaryDrawerItem().apply {
             withName(name)
+            withSetSelected(true)
             withIdentifier(identifier)
-            withOnDrawerItemClickListener { view, position, drawerItem ->
+            withOnDrawerItemClickListener { _, _, drawerItem ->
 
-                val cinemaListType = getCinemaListTypeFromDrawableOnClick(drawerItem.identifier)
-                val cinemaType = getCinemaTypeFromDrawableOnClick(position)
-
-                info { "Item: listType $cinemaListType" }
-                info { "Item: cinemaType $cinemaType" }
-
-                displayLiveMedia(cinemaType, null, cinemaListType)
+                if (currentSelectedIdentifier != drawerItem.identifier) {
+                    val cinemaListType = getCinemaListTypeFromDrawableOnClick(drawerItem.identifier)
+                    val cinemaType = getCinemaTypeFromDrawableOnClick(drawerItem.identifier)
+                    cinema_list_toolbar.title = "$cinemaListType (${cinemaType.toUpperCase()})"
+                    displayLiveMedia(cinemaType, null, cinemaListType)
+                    currentSelectedIdentifier = drawerItem.identifier
+                }
                 false
             }
         }
     }
 
-    private fun getCinemaTypeFromDrawableOnClick(fromPosition: Int): String {
-        return if (fromPosition > 7) {
+    private fun getCinemaTypeFromDrawableOnClick(fromIdentifier: Long): String {
+        return if (fromIdentifier > 5L) {
             CINEMA_TYPE_TV
         } else {
             CINEMA_TYPE_MOVIE
@@ -156,17 +196,18 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
 
     private fun getCinemaListTypeFromDrawableOnClick(fromIdentidier: Long): String {
         return when (fromIdentidier) {
-            TRENDING_MOVIE -> MOVIE_CINEMALIST_TRENDING
-            NOW_PLAYING_MOVIE -> MOVIE_CINEMALIST_NOW_PLAYING
-            POPULAR_MOVIE -> MOVIE_CINEMALIST_POPULAR
-            TOP_RATED_MOVIE -> MOVIE_CINEMALIST_TOP_RATED
-            UPCOMING_MOVIE -> MOVIE_CINEMALIST_UPCOMING
+            IDENTIFIER_TRENDING_MOVIE -> API_CINEMALIST_TRENDING
+            IDENTIFIER_NOW_PLAYING_MOVIE -> API_MOVIE_CINEMALIST_NOW_PLAYING
+            IDENTIFIER_POPULAR_MOVIE -> API_CINEMALIST_POPULAR
+            IDENTIFIER_TOP_RATED_MOVIE -> API_CINEMALIST_TOP_RATED
+            IDENTIFIER_UPCOMING_MOVIE -> API_MOVIE_CINEMALIST_UPCOMING
 
-            TRENDING_TV -> TV_CINEMALIST_TRENDING
-            LATEST_TV -> TV_CINEMALIST_LATEST
-            POPULAR_TV -> TV_CINEMALIST_POPULAR
-            TOP_RATED_TV -> TV_CINEMALIST_TOP_RATED
-            AIRING_TODAY_TV -> TV_CINEMALIST_AIRING_TODAY
+            IDENTIFIER_TRENDING_TV -> API_CINEMALIST_TRENDING
+            IDENTIFIER_LATEST_TV -> API_TV_CINEMALIST_LATEST
+            IDENTIFIER_POPULAR_TV -> API_CINEMALIST_POPULAR
+            IDENTIFIER_TOP_RATED_TV -> API_CINEMALIST_TOP_RATED
+            IDENTIFIER_AIRING_TODAY_TV -> API_TV_CINEMALIST_AIRING_TODAY
+
             else -> "Invalid"
         }
     }

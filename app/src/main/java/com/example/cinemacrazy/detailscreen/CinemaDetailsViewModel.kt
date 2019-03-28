@@ -14,7 +14,7 @@ import com.example.cinemacrazy.datamodel.room.VideoPath
 import com.example.cinemacrazy.datamodel.room.daos.CinemaDao
 import com.example.cinemacrazy.datamodel.room.daos.ImagesDao
 import com.example.cinemacrazy.datamodel.room.daos.VideosDao
-import com.example.cinemacrazy.datamodel.utils.CINEMA_TYPE_MOVIE
+import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_MOVIE
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.Function3
