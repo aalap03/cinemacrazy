@@ -16,7 +16,7 @@ import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.*
 import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_MOVIE
 import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_TV
 import com.example.cinemacrazy.datamodel.utils.constant.KEY_CINEMA_TYPE
-import com.example.cinemacrazy.datamodel.utils.TMDB_IMAGE_PATH
+import com.example.cinemacrazy.datamodel.utils.TMDB_POSTER_IMAGE_PATH
 
 val MOVIE_DETAIL = "movie_details"
 
@@ -48,7 +48,7 @@ class MoviesAdapter :
         fun bindItem(item: BaseMedia) {
 
             Glide.with(this.itemView.context)
-                .load(item.posterPath()?.TMDB_IMAGE_PATH())
+                .load(item.posterPath()?.TMDB_POSTER_IMAGE_PATH())
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(moviePoster)
 

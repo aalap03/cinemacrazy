@@ -2,6 +2,7 @@ package com.example.cinemacrazy.medialist
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -31,8 +32,8 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
 
     lateinit var adapter: MoviesAdapter
     lateinit var viewmodel: CinemaViewModel
-    var CINEMA_TYPE = CINEMA_TYPE_MOVIE
-    var CINEMA_LIST_TYPE = ""
+    private var CINEMA_TYPE = CINEMA_TYPE_MOVIE
+    private var CINEMA_LIST_TYPE = API_CINEMALIST_TRENDING
     lateinit var drawer: Drawer
     var currentSelectedIdentifier = 1L
 
@@ -52,8 +53,10 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         setRecyclerView()
 
         viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
-        displayLiveMedia(CINEMA_TYPE, null, API_CINEMALIST_TRENDING)
+        displayLiveMedia(null)
+        viewmodel.initialLoading().observe(this, Observer { progress.visibility = if (it) View.VISIBLE else View.GONE })
 
+        supportActionBar?.title = getToolbarTitle()
     }
 
     private fun setRecyclerView() {
@@ -72,7 +75,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         val searchView = (menu?.findItem(R.id.main_menu_search)?.actionView as SearchView)
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                displayLiveMedia(CINEMA_TYPE, query, CINEMA_LIST_TYPE)
+                displayLiveMedia(query)
                 return true
             }
 
@@ -82,19 +85,17 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         })
 
         searchView.setOnCloseListener {
-            displayLiveMedia(CINEMA_TYPE, null, CINEMA_LIST_TYPE)
+            displayLiveMedia(null)
             false
         }
         return true
     }
 
-    private fun displayLiveMedia(mediaType: String, query: String?, cinemaListType: String) {
-        info { "displayLiveMedia: $mediaType->$cinemaListType" }
-        viewmodel.setCurrentMediaType(mediaType)
-        viewmodel.getCurrentMediaType().observe(this, Observer<String> {
-            viewmodel.getMediaLive(api, it, query = query, cinemaListType = cinemaListType).observe(this,
-                Observer<PagedList<BaseMedia>?> { t -> adapter.submitList(t) })
-        })
+    private fun displayLiveMedia(query: String?) {
+        info { "displayLiveMedia: $CINEMA_TYPE->$CINEMA_LIST_TYPE" }
+        viewmodel.getMediaLive(api, CINEMA_TYPE, query = query, cinemaListType = CINEMA_LIST_TYPE).observe(this,
+            Observer<PagedList<BaseMedia>?> { t -> adapter.submitList(t) })
+
     }
 
     fun showBackArrow() {
@@ -175,15 +176,29 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
             withOnDrawerItemClickListener { _, _, drawerItem ->
 
                 if (currentSelectedIdentifier != drawerItem.identifier) {
-                    val cinemaListType = getCinemaListTypeFromDrawableOnClick(drawerItem.identifier)
-                    val cinemaType = getCinemaTypeFromDrawableOnClick(drawerItem.identifier)
-                    cinema_list_toolbar.title = "$cinemaListType (${cinemaType.toUpperCase()})"
-                    displayLiveMedia(cinemaType, null, cinemaListType)
+                    CINEMA_LIST_TYPE = getCinemaListTypeFromDrawableOnClick(drawerItem.identifier)
+                    CINEMA_TYPE = getCinemaTypeFromDrawableOnClick(drawerItem.identifier)
+                    cinema_list_toolbar.title = getToolbarTitle()
+                    displayLiveMedia(null)
                     currentSelectedIdentifier = drawerItem.identifier
                 }
                 false
             }
         }
+    }
+
+    private fun getToolbarTitle(): CharSequence? {
+        val cinemaListTye = when (CINEMA_LIST_TYPE) {
+            API_CINEMALIST_POPULAR -> getString(R.string.movie_popular)
+            API_CINEMALIST_TRENDING -> getString(R.string.movie_trending)
+            API_CINEMALIST_TOP_RATED -> getString(R.string.movie_top_rated)
+            API_MOVIE_CINEMALIST_NOW_PLAYING -> getString(R.string.movie_now_playing)
+            API_MOVIE_CINEMALIST_UPCOMING -> getString(R.string.movie_upcoming)
+            API_TV_CINEMALIST_AIRING_TODAY -> getString(R.string.tv_airing_today)
+            API_TV_CINEMALIST_LATEST -> getString(R.string.tv_latest)
+            else -> ""
+        }
+        return "$cinemaListTye (${CINEMA_TYPE.toUpperCase()})"
     }
 
     private fun getCinemaTypeFromDrawableOnClick(fromIdentifier: Long): String {

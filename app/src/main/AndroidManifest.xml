@@ -22,8 +22,12 @@
             </intent-filter>
         </activity>
         <activity
+
                 android:name=".detailscreen.CinemaDetailScreen"
+                android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"
                 android:parentActivityName=".medialist.CinemaListActivity"/>
+
+
         <activity android:name=".detailscreen.WebView"/>
     </application>
 

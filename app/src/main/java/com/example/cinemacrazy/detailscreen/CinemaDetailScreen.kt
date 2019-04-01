@@ -2,9 +2,7 @@ package com.example.cinemacrazy.detailscreen
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,14 +16,14 @@ import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.Trendin
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.TrendingTv
 import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_MOVIE
 import com.example.cinemacrazy.datamodel.utils.constant.KEY_CINEMA_TYPE
-import com.example.cinemacrazy.datamodel.utils.TMDB_IMAGE_PATH
+import com.example.cinemacrazy.datamodel.utils.TMDB_POSTER_IMAGE_PATH
 import com.example.cinemacrazy.medialist.MOVIE_DETAIL
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import kotlinx.android.synthetic.main.cinema_details.*
 import kotlinx.android.synthetic.main.media_detail_screen.*
 import org.jetbrains.anko.AnkoLogger
 import android.graphics.Paint
 import com.example.cinemacrazy.R
+import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 
 
 class CinemaDetailScreen : BaseActivity(), AnkoLogger {
@@ -43,6 +41,11 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
 
         mediaType = intent.getStringExtra(KEY_CINEMA_TYPE)
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+//        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
 
         setMediaRecyclerViews()
         setGenresText()
@@ -85,13 +88,19 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
 
         detailsViewModel.cinemaImages.observe(
             this,
-            Observer<MutableList<MovieMedia>?> { t -> imageAdapter.submitList(t) })
+            Observer<MutableList<MovieMedia>?> { t ->
+                imageAdapter.submitList(t)
+                cinema_images_heading.text = "Images (${t?.size})"
+            })
         detailsViewModel.imagesLoading.observe(
             this,
             Observer<Boolean?> { image_loading.visibility = if (it == true) View.VISIBLE else View.GONE })
         detailsViewModel.cinemaVideos.observe(
             this,
-            Observer<MutableList<MovieMedia>?> { videos -> videoAdapter.submitList(videos) })
+            Observer<MutableList<MovieMedia>?> { videos ->
+                videoAdapter.submitList(videos)
+                cinema_videos_heading.text = "Video (${videos?.size})"
+            })
         detailsViewModel.videosLoading.observe(
             this,
             Observer<Boolean?> { videos_loading.visibility = if (it == true) View.VISIBLE else View.GONE })
@@ -107,9 +116,7 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
         } else {
             tv = intent.getParcelableExtra(MOVIE_DETAIL)
             val arrayList = tv?.genreIds()
-            arrayList?.let {
-                genres = app.getTvGenres(it).toString()
-            }
+            arrayList?.let { genres = app.getTvGenres(it).toString() }
         }
         cinema_genre.text = genres.replace("[", "").replace("]", "")
     }
@@ -124,31 +131,26 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
     private fun showMediaStoredDetails(movie: BaseMedia) {
 
         cinema_release_date.text = movie.relaeseDate()
-        cinema_votes.text = "TMDB ${movie.voteAvrg()} /10"
+        cinema_votes.text = "TMDB ${movie.voteAvrg()} /10 (${movie.voteCount()} Votes)"
         cinema_storyline.text = movie.overView()
-
-        val displayMetrics = DisplayMetrics()
-        window.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val height = displayMetrics.heightPixels / 3
-        val params = CollapsingToolbarLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
-        movie_image.layoutParams = params
+        collapsing_toolbar.title = movie.getName()
 
         Glide.with(this)
             .applyDefaultRequestOptions(
                 RequestOptions()
-                    .placeholder(R.mipmap.ic_launcher)
-                    .error(R.drawable.ic_launcher_foreground)
+                    .placeholder(R.drawable.tmdb_logo_image)
+                    .error(R.drawable.tmdb_logo_image)
             )
-            .load(movie.backdropPath()?.TMDB_IMAGE_PATH())
+            .load(movie.backdropPath()?.TMDB_BACKDROP_IMAGE_PATH())
             .into(movie_image)
 
         Glide.with(this)
             .applyDefaultRequestOptions(
                 RequestOptions()
-                    .placeholder(R.mipmap.ic_launcher)
-                    .error(R.drawable.ic_launcher_foreground)
+                    .placeholder(R.drawable.tmdb_logo_image)
+                    .error(R.drawable.tmdb_logo_image)
             )
-            .load(movie.posterPath()?.TMDB_IMAGE_PATH())
+            .load(movie.posterPath()?.TMDB_POSTER_IMAGE_PATH())
             .into(cinema_poster)
     }
 

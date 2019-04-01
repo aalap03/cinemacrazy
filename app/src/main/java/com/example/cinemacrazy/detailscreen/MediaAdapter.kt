@@ -16,7 +16,7 @@ import android.content.Context
 import android.net.Uri
 import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.IMAGE
 import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.MovieMedia
-import com.example.cinemacrazy.datamodel.utils.TMDB_IMAGE_PATH
+import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 import com.example.cinemacrazy.datamodel.utils.YOUTUBE_THUMBNAIL
 import com.example.cinemacrazy.datamodel.utils.getDrawable
 
@@ -53,7 +53,7 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
                             .placeholder(R.drawable.gradient.getDrawable(context = itemView.context))
                             .error(R.drawable.gradient.getDrawable(context = itemView.context))
                     )
-                    .load(media.getLinkKey().TMDB_IMAGE_PATH())
+                    .load(media.getLinkKey().TMDB_BACKDROP_IMAGE_PATH())
                     .into(cardImage)
             } else {
                 Glide.with(view.context)

@@ -11,7 +11,6 @@ import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMed
 class CinemaViewModel : ViewModel() {
 
     lateinit var factory: CinemaDataSourceFactory
-    var mutableMediaType = MutableLiveData<String>()
 
     fun getMediaLive(api: TmdbService, mediaType: String, query: String?, cinemaListType: String): LiveData<PagedList<BaseMedia>> {
 
@@ -28,6 +27,9 @@ class CinemaViewModel : ViewModel() {
         return livePagedListBuilder.build()
     }
 
+    fun initialLoading(): MutableLiveData<Boolean> {
+        return factory.initialLoading()
+    }
     private fun clearPreviousRequest() {
         factory.clear()
     }
@@ -35,13 +37,5 @@ class CinemaViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         clearPreviousRequest()
-    }
-
-    fun setCurrentMediaType(type: String) {
-        mutableMediaType.postValue(type)
-    }
-
-    fun getCurrentMediaType(): MutableLiveData<String> {
-        return mutableMediaType
     }
 }

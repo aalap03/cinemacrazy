@@ -1,5 +1,6 @@
 package com.example.cinemacrazy.medialist
 
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.example.cinemacrazy.apiservice.*
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
@@ -23,12 +24,16 @@ class CinemaDataSource(
     AnkoLogger {
 
     private var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    var initialLoading = MutableLiveData<Boolean>()
 
     override fun loadInitial(params: LoadInitialParams<Long>, callback: LoadInitialCallback<Long, BaseMedia>) {
+        info { "load:Initial $mediaType->$cinemaListType" }
+        initialLoading.postValue(true)
         getBaseMediaResponse(api, 1, callback, null)
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<Long, BaseMedia>) {
+        info { "load:After $mediaType->$cinemaListType" }
         getBaseMediaResponse(api, params.key, initialCallback = null, afterCallback = callback)
     }
 
@@ -89,10 +94,16 @@ class CinemaDataSource(
             }
         }
             .subscribe({ t ->
-                initialCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, null, 2)
+                initialCallback?.let {
+                    it.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, null, 2)
+                    initialLoading.postValue(false)
+                }
                 afterCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, pageNum + 1)
             }, { t ->
                 t.printStackTrace()
+                initialCallback?.let {
+                    initialLoading.postValue(false)
+                }
                 info { "onError: ${t.localizedMessage}" }
             })
         )

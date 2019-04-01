@@ -8,7 +8,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.cinemacrazy.R
 
 fun String.YOUTUBE_VIDEO_PATH() = "https://www.youtube.com/watch?v=$this"
-fun String.TMDB_IMAGE_PATH(): String = "https://image.tmdb.org/t/p/w342/$this"
+fun String.TMDB_POSTER_IMAGE_PATH(): String = "https://image.tmdb.org/t/p/w342/$this"
+fun String.TMDB_BACKDROP_IMAGE_PATH(): String = "https://image.tmdb.org/t/p/original/$this"
 
 fun String.YOUTUBE_THUMBNAIL(): String =
     "https://img.youtube.com/vi/" +
