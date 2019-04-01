@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.cinema_details.*
 import kotlinx.android.synthetic.main.media_detail_screen.*
 import org.jetbrains.anko.AnkoLogger
 import android.graphics.Paint
+import android.view.MenuItem
 import com.example.cinemacrazy.R
 import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 
@@ -43,9 +44,10 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
         mediaType = intent.getStringExtra(KEY_CINEMA_TYPE)
 
         setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-//        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
+        supportActionBar?.setHomeButtonEnabled(true)
 
         setMediaRecyclerViews()
         setGenresText()

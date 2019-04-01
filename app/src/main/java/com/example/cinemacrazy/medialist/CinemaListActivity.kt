@@ -73,6 +73,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         menuInflater.inflate(R.menu.main_screen_menu, menu)
 
         val searchView = (menu?.findItem(R.id.main_menu_search)?.actionView as SearchView)
+        searchView.setOnSearchClickListener { searchView.queryHint = "Search ${CINEMA_TYPE.toUpperCase()}" }
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 displayLiveMedia(query)
@@ -98,23 +99,12 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
 
     }
 
-    fun showBackArrow() {
-        drawer.actionBarDrawerToggle.isDrawerIndicatorEnabled = false
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    fun showHamburgerIcon() {
-        supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        drawer.actionBarDrawerToggle.isDrawerIndicatorEnabled = true
-    }
-
     private fun addDrawerItems() {
         drawer.addItem(PrimaryDrawerItem().apply {
-            withName("Cinem@Cr@zy")
+            withName("Cinem@ Cr@zy")
             withSelectable(false)
             withSubItems()
         })
-
         drawer.addItem(ExpandableDrawerItem().apply {
             withName("Movies")
             withSubItems(
@@ -140,7 +130,6 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
                 )
             )
         })
-
         drawer.addItem(ExpandableDrawerItem().apply {
             withName("TV")
             withSubItems(
@@ -209,8 +198,8 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         }
     }
 
-    private fun getCinemaListTypeFromDrawableOnClick(fromIdentidier: Long): String {
-        return when (fromIdentidier) {
+    private fun getCinemaListTypeFromDrawableOnClick(fromIdentifier: Long): String {
+        return when (fromIdentifier) {
             IDENTIFIER_TRENDING_MOVIE -> API_CINEMALIST_TRENDING
             IDENTIFIER_NOW_PLAYING_MOVIE -> API_MOVIE_CINEMALIST_NOW_PLAYING
             IDENTIFIER_POPULAR_MOVIE -> API_CINEMALIST_POPULAR

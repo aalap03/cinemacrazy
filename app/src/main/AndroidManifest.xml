@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="com.example.cinemacrazy">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -12,7 +13,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-            android:usesCleartextTraffic="true">
+            android:usesCleartextTraffic="true"
+            tools:ignore="GoogleAppIndexingWarning">
 
         <activity android:name=".medialist.CinemaListActivity">
             <intent-filter>
@@ -21,12 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity
-
                 android:name=".detailscreen.CinemaDetailScreen"
-                android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"
-                android:parentActivityName=".medialist.CinemaListActivity"/>
-
+                android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"/>
 
         <activity android:name=".detailscreen.WebView"/>
     </application>
