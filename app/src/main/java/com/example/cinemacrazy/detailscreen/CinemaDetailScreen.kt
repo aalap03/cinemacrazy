@@ -26,8 +26,10 @@ import android.view.MenuItem
 import com.example.cinemacrazy.R
 import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 
+val KEY_POSITION = "position"
+val KEY_IMAGE_LIST = "key_image_list"
 
-class CinemaDetailScreen : BaseActivity(), AnkoLogger {
+class CinemaDetailScreen : BaseActivity(), AnkoLogger, ImageClickCallback {
 
     var movie: TrendingMovie? = null
     var tv: TrendingTv? = null
@@ -35,8 +37,9 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
     lateinit var baseMedia: BaseMedia
     lateinit var detailsViewModel: CinemaDetailsViewModel
     lateinit var genres: String
-    var imageAdapter = MediaAdapter()
-    var videoAdapter = MediaAdapter()
+    var imageAdapter = MediaAdapter(this)
+    var videoAdapter = MediaAdapter(null)
+    val imageLinkList = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,9 +93,10 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
 
         detailsViewModel.cinemaImages.observe(
             this,
-            Observer<MutableList<MovieMedia>?> { t ->
-                imageAdapter.submitList(t)
-                cinema_images_heading.text = "Images (${t?.size})"
+            Observer<MutableList<MovieMedia>?> { imageLinks ->
+                imageAdapter.submitList(imageLinks)
+                cinema_images_heading.text = "Images (${imageLinks?.size})"
+                imageLinks?.forEach { movieMedia -> imageLinkList.add(movieMedia.getLinkKey()) }
             })
         detailsViewModel.imagesLoading.observe(
             this,
@@ -106,6 +110,13 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger {
         detailsViewModel.videosLoading.observe(
             this,
             Observer<Boolean?> { videos_loading.visibility = if (it == true) View.VISIBLE else View.GONE })
+    }
+
+    override fun imageClicked(position: Int, imageKey: String) {
+        val intent = Intent(this, ImageScreen::class.java)
+        intent.putExtra(KEY_POSITION, position)
+        intent.putExtra(KEY_IMAGE_LIST, imageLinkList)
+        startActivity(intent)
     }
 
     private fun setGenresText() {

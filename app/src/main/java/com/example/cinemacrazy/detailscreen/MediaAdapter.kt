@@ -20,17 +20,18 @@ import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 import com.example.cinemacrazy.datamodel.utils.YOUTUBE_THUMBNAIL
 import com.example.cinemacrazy.datamodel.utils.getDrawable
 
-class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : DiffUtil.ItemCallback<MovieMedia>() {
+class MediaAdapter(var callback: ImageClickCallback?) :
+    ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : DiffUtil.ItemCallback<MovieMedia>() {
 
-    override fun areItemsTheSame(oldItem: MovieMedia, newItem: MovieMedia): Boolean {
-        return oldItem.getLinkKey() == newItem.getLinkKey()
-    }
+        override fun areItemsTheSame(oldItem: MovieMedia, newItem: MovieMedia): Boolean {
+            return oldItem.getLinkKey() == newItem.getLinkKey()
+        }
 
-    override fun areContentsTheSame(oldItem: MovieMedia, newItem: MovieMedia): Boolean {
-        return oldItem.getLinkKey() == newItem.getLinkKey()
-    }
+        override fun areContentsTheSame(oldItem: MovieMedia, newItem: MovieMedia): Boolean {
+            return oldItem.getLinkKey() == newItem.getLinkKey()
+        }
 
-}) {
+    }) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaHolder {
 
         return MediaHolder(LayoutInflater.from(parent.context).inflate(R.layout.simple_image_card_item, parent, false))
@@ -38,13 +39,13 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
 
 
     override fun onBindViewHolder(holder: MediaHolder, position: Int) {
-        holder.bindView(getItem(position))
+        holder.bindView(position, getItem(position))
     }
 
     inner class MediaHolder(var view: View) : RecyclerView.ViewHolder(view) {
         var cardImage: ImageView = view.findViewById(R.id.simple_card_image)
 
-        fun bindView(media: MovieMedia) {
+        fun bindView(position: Int, media: MovieMedia) {
 
             if (media.mediaType() == IMAGE) {
                 Glide.with(view.context)
@@ -55,6 +56,8 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
                     )
                     .load(media.getLinkKey().TMDB_BACKDROP_IMAGE_PATH())
                     .into(cardImage)
+                cardImage.setOnClickListener { callback?.imageClicked(position, media.getLinkKey()) }
+
             } else {
                 Glide.with(view.context)
                     .applyDefaultRequestOptions(
@@ -72,14 +75,15 @@ class MediaAdapter : ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : 
 
     fun watchYoutubeVideo(context: Context, id: String) {
         val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id"))
-        val webIntent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse("http://www.youtube.com/watch?v=$id")
-        )
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
         try {
             context.startActivity(appIntent)
         } catch (ex: ActivityNotFoundException) {
             context.startActivity(webIntent)
         }
     }
+}
+
+interface ImageClickCallback {
+    fun imageClicked(position: Int, imageKey: String)
 }

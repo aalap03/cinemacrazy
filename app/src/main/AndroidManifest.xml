@@ -29,6 +29,7 @@
                 android:theme="@style/Theme.MaterialComponents.Light.NoActionBar.Bridge"/>
 
         <activity android:name=".detailscreen.WebView"/>
+        <activity android:name=".detailscreen.ImageScreen"/>
     </application>
 
 </manifest>

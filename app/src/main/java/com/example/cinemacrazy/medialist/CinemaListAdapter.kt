@@ -18,7 +18,7 @@ import com.example.cinemacrazy.datamodel.utils.constant.CINEMA_TYPE_TV
 import com.example.cinemacrazy.datamodel.utils.constant.KEY_CINEMA_TYPE
 import com.example.cinemacrazy.datamodel.utils.TMDB_POSTER_IMAGE_PATH
 
-val MOVIE_DETAIL = "movie_details"
+const val MOVIE_DETAIL = "movie_details"
 
 class MoviesAdapter :
     PagedListAdapter<BaseMedia, MoviesAdapter.MovieHolder>(object : DiffUtil.ItemCallback<BaseMedia>() {
@@ -36,20 +36,19 @@ class MoviesAdapter :
         return MovieHolder(view)
     }
 
-
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
         getItem(position)?.let { holder.bindItem(it) }
     }
 
     inner class MovieHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var moviePoster: ImageView = itemView.findViewById(R.id.movie_poster)
+        private var moviePoster: ImageView = itemView.findViewById(R.id.movie_poster)
 
         fun bindItem(item: BaseMedia) {
 
             Glide.with(this.itemView.context)
                 .load(item.posterPath()?.TMDB_POSTER_IMAGE_PATH())
-                .placeholder(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.tmdb_logo_image)
                 .into(moviePoster)
 
             itemView.setOnClickListener {
