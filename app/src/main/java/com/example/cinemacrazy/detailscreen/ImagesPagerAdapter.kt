@@ -11,6 +11,7 @@ import com.example.cinemacrazy.R
 import com.example.cinemacrazy.datamodel.utils.TMDB_POSTER_IMAGE_PATH_ORIGINAL
 import org.jetbrains.anko.AnkoLogger
 
+
 class ImagesPagerAdapter(var movies: MutableList<String>) : RecyclerView.Adapter<ImagesPagerAdapter.MovieHolder>(), AnkoLogger {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder =
