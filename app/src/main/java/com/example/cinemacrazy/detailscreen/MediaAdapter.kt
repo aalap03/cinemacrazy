@@ -12,12 +12,8 @@ import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.IMAGE
 import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.MovieMedia
 import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 import com.example.cinemacrazy.R
-import com.example.cinemacrazy.datamodel.utils.constant.ApiConstants.Companion.YOUTUBE_API_KEY
+import com.example.cinemacrazy.datamodel.utils.YOUTUBE_THUMBNAIL
 import com.example.cinemacrazy.datamodel.utils.loadImage
-import com.google.android.youtube.player.YouTubeInitializationResult
-import com.google.android.youtube.player.YouTubeThumbnailLoader
-import com.google.android.youtube.player.YouTubeThumbnailView
-
 
 const val KEY_VIDEO_LINKS = "key_video_links"
 
@@ -40,15 +36,15 @@ class MediaAdapter(var callback: MediaClickCallback) :
 
     inner class MediaHolder(var view: View) : RecyclerView.ViewHolder(view) {
         private var cardImage: ImageView = view.findViewById(R.id.simple_card_image)
-        private var thumbnailView: YouTubeThumbnailView = view.findViewById(R.id.thumbnail_view)
 
         fun bindView(position: Int, media: MovieMedia) {
 
             if (media.mediaType() == IMAGE) {
-                thumbnailView.visibility = View.GONE
-                cardImage.visibility = View.VISIBLE
 
-                Glide.with(view.context).loadImage(media.getLinkKey().TMDB_BACKDROP_IMAGE_PATH(), cardImage)
+                Glide
+                    .with(view.context)
+                    .loadImage(media.getLinkKey().TMDB_BACKDROP_IMAGE_PATH(), cardImage)
+
                 cardImage.setOnClickListener {
                     callback.mediaClicked(
                         position = position,
@@ -57,39 +53,17 @@ class MediaAdapter(var callback: MediaClickCallback) :
                     )
                 }
             } else {
-                thumbnailView.visibility = View.VISIBLE
-                cardImage.visibility = View.GONE
-                thumbnailView.setOnClickListener {
+                Glide
+                    .with(view.context)
+                    .loadImage(media.getLinkKey().YOUTUBE_THUMBNAIL(), cardImage)
+
+                cardImage.setOnClickListener {
                     callback.mediaClicked(
                         position = position,
                         mediaKey = media.getLinkKey(),
                         isMediaImage = false
                     )
                 }
-
-                thumbnailView.initialize(YOUTUBE_API_KEY, object : YouTubeThumbnailView.OnInitializedListener {
-                    override fun onInitializationSuccess(p0: YouTubeThumbnailView?, youTubeThumbnailLoader: YouTubeThumbnailLoader?) {
-                        youTubeThumbnailLoader?.setVideo(media.getLinkKey())
-                        youTubeThumbnailLoader?.setOnThumbnailLoadedListener(object: YouTubeThumbnailLoader.OnThumbnailLoadedListener {
-                            override fun onThumbnailLoaded(p0: YouTubeThumbnailView?, p1: String?) {
-                                youTubeThumbnailLoader.release()
-                            }
-
-                            override fun onThumbnailError(
-                                p0: YouTubeThumbnailView?,
-                                p1: YouTubeThumbnailLoader.ErrorReason?
-                            ) {
-                                youTubeThumbnailLoader.release()
-                            }
-                        })
-                    }
-
-                    override fun onInitializationFailure(p0: YouTubeThumbnailView?, p1: YouTubeInitializationResult?) {
-                        p0?.setImageResource(R.drawable.tmdb_logo_image)
-                    }
-                })
-
-
             }
         }
     }

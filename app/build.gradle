@@ -20,9 +20,6 @@ android {
         buildConfigField "String", "TMDB_API_KEY", "\"70ca97bc3cbdc59a4577ea0dbeb9da00\""
         buildConfigField "String", "BASE_TMDB_API", "\"https://api.themoviedb.org/3/\""
 
-        buildConfigField "String", "OMDB_API", "\"1b890ce3\""
-        buildConfigField "String", "BASE_OMDB_API", "\"http://www.omdbapi.com/\""
-
     }
     buildTypes {
         release {

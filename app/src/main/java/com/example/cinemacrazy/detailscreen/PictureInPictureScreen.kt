@@ -11,7 +11,6 @@ import com.google.android.youtube.player.YouTubeBaseActivity
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 
 class PictureInPictureScreen : YouTubeBaseActivity(), AnkoLogger {
 

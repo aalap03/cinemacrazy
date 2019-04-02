@@ -14,7 +14,7 @@ fun String.TMDB_POSTER_IMAGE_PATH_ORIGINAL(): String = "https://image.tmdb.org/t
 
 fun String.TMDB_BACKDROP_IMAGE_PATH(): String = "https://image.tmdb.org/t/p/original/$this"
 
-//not useful if you are using YoutubePlayerView and YoutubeThumbnailView respectively
+//not useful if you are using YoutubePlayerView
 fun String.YOUTUBE_VIDEO_PATH() = "https://www.youtube.com/watch?v=$this"
 fun String.YOUTUBE_THUMBNAIL(): String =
     "https://img.youtube.com/vi/" +

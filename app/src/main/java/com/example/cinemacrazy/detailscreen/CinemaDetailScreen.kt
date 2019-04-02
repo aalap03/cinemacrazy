@@ -3,6 +3,8 @@ package com.example.cinemacrazy.detailscreen
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
@@ -24,10 +26,18 @@ import kotlinx.android.synthetic.main.cinema_details.*
 import kotlinx.android.synthetic.main.media_detail_screen.*
 import org.jetbrains.anko.AnkoLogger
 import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
+import androidx.palette.graphics.Palette
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.cinemacrazy.BuildConfig
 import com.example.cinemacrazy.R
+import com.example.cinemacrazy.application.getColor
 import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 
 val KEY_POSITION = "position"
@@ -154,6 +164,48 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger, MediaClickCallback {
                     .error(R.drawable.tmdb_logo_image)
             )
             .load(movie.backdropPath()?.TMDB_BACKDROP_IMAGE_PATH())
+            .addListener(object : RequestListener<Drawable?> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable?>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    collapsing_toolbar.setStatusBarScrimColor(R.color.colorAccent.getColor(this@CinemaDetailScreen))
+                    collapsing_toolbar.setContentScrimColor(R.color.colorPrimary.getColor(this@CinemaDetailScreen))
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable?>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    if (resource is BitmapDrawable) {
+                        Palette.from(resource.bitmap)
+                            .generate { palette ->
+                                val vibrant = palette?.vibrantSwatch
+                                val mutedColor = palette?.vibrantSwatch?.rgb
+                                if (vibrant != null) {
+                                    collapsing_toolbar.setStatusBarScrimColor(
+                                        palette.getDarkMutedColor(
+                                            mutedColor ?: R.color.colorAccent
+                                        )
+                                    )
+                                    collapsing_toolbar.setContentScrimColor(
+                                        palette.getMutedColor(
+                                            mutedColor ?: R.color.colorPrimary
+                                        )
+                                    )
+                                }
+
+                            }
+                    }
+                    return false
+                }
+            })
             .into(movie_image)
 
         Glide.with(this)
