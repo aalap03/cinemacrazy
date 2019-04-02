@@ -10,7 +10,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.cinemacrazy.R
 import com.example.cinemacrazy.datamodel.utils.TMDB_POSTER_IMAGE_PATH_ORIGINAL
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 
 class ImagesPagerAdapter(var movies: MutableList<String>) : RecyclerView.Adapter<ImagesPagerAdapter.MovieHolder>(), AnkoLogger {
 
@@ -26,7 +25,6 @@ class ImagesPagerAdapter(var movies: MutableList<String>) : RecyclerView.Adapter
         private var posterImage : ImageView = view.findViewById(R.id.image_item)
 
         fun bindIten(movieItem: String) {
-            info { movieItem.TMDB_POSTER_IMAGE_PATH_ORIGINAL() }
             Glide.with(view.context)
                 .applyDefaultRequestOptions(RequestOptions().error(R.drawable.tmdb_logo_image).placeholder(R.drawable.tmdb_logo_image))
                 .load(movieItem.TMDB_POSTER_IMAGE_PATH_ORIGINAL())
