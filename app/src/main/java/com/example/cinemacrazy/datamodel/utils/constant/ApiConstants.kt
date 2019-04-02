@@ -1,7 +1,5 @@
 package com.example.cinemacrazy.datamodel.utils.constant
 
-import com.example.cinemacrazy.BuildConfig
-
 class ApiConstants {
 
     companion object {
@@ -15,6 +13,7 @@ class ApiConstants {
         const val API_TV_CINEMALIST_LATEST = "on_the_air"
         const val API_TV_CINEMALIST_AIRING_TODAY = "airing_today"
 
+        const val YOUTUBE_API_KEY = "AIzaSyDEh3g9ST6gjeRBwbvxoF4CMVnPBetM82A"
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.cinemacrazy.detailscreen
 
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -22,14 +24,16 @@ import kotlinx.android.synthetic.main.cinema_details.*
 import kotlinx.android.synthetic.main.media_detail_screen.*
 import org.jetbrains.anko.AnkoLogger
 import android.graphics.Paint
-import android.view.MenuItem
+import android.net.Uri
+import android.os.Build
+import com.example.cinemacrazy.BuildConfig
 import com.example.cinemacrazy.R
 import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 
 val KEY_POSITION = "position"
 val KEY_IMAGE_LIST = "key_image_list"
 
-class CinemaDetailScreen : BaseActivity(), AnkoLogger, ImageClickCallback {
+class CinemaDetailScreen : BaseActivity(), AnkoLogger, MediaClickCallback {
 
     var movie: TrendingMovie? = null
     var tv: TrendingTv? = null
@@ -38,8 +42,9 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger, ImageClickCallback {
     lateinit var detailsViewModel: CinemaDetailsViewModel
     lateinit var genres: String
     var imageAdapter = MediaAdapter(this)
-    var videoAdapter = MediaAdapter(null)
-    val imageLinkList = arrayListOf<String>()
+    var videoAdapter = MediaAdapter(this)
+    private val imageLinkList = arrayListOf<String>()
+    private val videoLinkList = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,17 +111,11 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger, ImageClickCallback {
             Observer<MutableList<MovieMedia>?> { videos ->
                 videoAdapter.submitList(videos)
                 cinema_videos_heading.text = "Video (${videos?.size})"
+                videos?.forEach { movieMedia -> videoLinkList.add(movieMedia.getLinkKey()) }
             })
         detailsViewModel.videosLoading.observe(
             this,
             Observer<Boolean?> { videos_loading.visibility = if (it == true) View.VISIBLE else View.GONE })
-    }
-
-    override fun imageClicked(position: Int, imageKey: String) {
-        val intent = Intent(this, ImageScreen::class.java)
-        intent.putExtra(KEY_POSITION, position)
-        intent.putExtra(KEY_IMAGE_LIST, imageLinkList)
-        startActivity(intent)
     }
 
     private fun setGenresText() {
@@ -165,6 +164,38 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger, ImageClickCallback {
             )
             .load(movie.posterPath()?.TMDB_POSTER_IMAGE_PATH())
             .into(cinema_poster)
+    }
+
+    override fun mediaClicked(position: Int, mediaKey: String, isMediaImage: Boolean) {
+        if (isMediaImage) {
+            val intent = Intent(this, ImageScreen::class.java)
+            intent.putExtra(KEY_POSITION, position)
+            intent.putExtra(KEY_IMAGE_LIST, imageLinkList)
+            startActivity(intent)
+        } else {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                openPiP()
+            else
+                watchYoutubeVideo(mediaKey)
+        }
+    }
+
+    private fun openPiP() {
+        val intent = Intent(this, PictureInPictureScreen::class.java)
+        intent.putExtra(KEY_VIDEO_LINKS, videoLinkList)
+        startActivity(intent)
+    }
+
+    private fun watchYoutubeVideo(id: String) {
+
+        val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id"))
+        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
+        try {
+            startActivity(appIntent)
+        } catch (ex: ActivityNotFoundException) {
+            startActivity(webIntent)
+        }
     }
 
     override fun getLayoutRes(): Int {
