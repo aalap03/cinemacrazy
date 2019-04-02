@@ -30,6 +30,12 @@
 
         <activity android:name=".detailscreen.WebView"/>
         <activity android:name=".detailscreen.ImageScreen"/>
+        <activity
+                android:name=".detailscreen.PictureInPictureScreen"
+                android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+                android:resizeableActivity="true"
+                android:supportsPictureInPicture="true"
+                android:launchMode="singleTask"/>
     </application>
 
 </manifest>

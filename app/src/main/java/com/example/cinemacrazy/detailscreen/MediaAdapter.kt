@@ -14,11 +14,16 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.Context
 import android.net.Uri
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.IMAGE
 import com.example.cinemacrazy.datamodel.serverResponses.mediaResponses.MovieMedia
 import com.example.cinemacrazy.datamodel.utils.TMDB_BACKDROP_IMAGE_PATH
 import com.example.cinemacrazy.datamodel.utils.YOUTUBE_THUMBNAIL
+import com.example.cinemacrazy.datamodel.utils.YOUTUBE_VIDEO_PATH
 import com.example.cinemacrazy.datamodel.utils.getDrawable
+
+val KEY_VIDEO_URL = "key_video_url"
 
 class MediaAdapter(var callback: ImageClickCallback?) :
     ListAdapter<MovieMedia, MediaAdapter.MediaHolder>(object : DiffUtil.ItemCallback<MovieMedia>() {
@@ -68,12 +73,22 @@ class MediaAdapter(var callback: ImageClickCallback?) :
                     .load(media.getLinkKey().YOUTUBE_THUMBNAIL())
                     .into(cardImage)
 
-                cardImage.setOnClickListener { v -> watchYoutubeVideo(v.context, media.getLinkKey()) }
+                cardImage.setOnClickListener { v ->
+                    watchYoutubeVideo(v.context, media.getLinkKey())
+                    //openPiP(media.getLinkKey())
+                }
             }
+        }
+
+        private fun openPiP(linkKey: String) {
+            var intent = Intent(view.context, PictureInPictureScreen::class.java)
+            intent.putExtra(KEY_VIDEO_URL, linkKey)
+            view.context.startActivity(intent)
         }
     }
 
     fun watchYoutubeVideo(context: Context, id: String) {
+
         val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id"))
         val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
         try {
