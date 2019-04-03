@@ -4,6 +4,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:orientation="vertical"
+        android:id="@+id/details_screen_root"
         android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,7 +19,6 @@
                 android:fitsSystemWindows="true"
                 android:id="@+id/collapsing_toolbar"
                 app:title="Aalap"
-                app:contentScrim="@color/colorAccent"
                 app:expandedTitleTextAppearance="@style/title_style_expanded"
                 app:collapsedTitleTextAppearance="@style/title_style_collapsed"
                 app:expandedTitleMarginStart="40dp"

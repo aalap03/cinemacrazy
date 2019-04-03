@@ -189,18 +189,10 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger, MediaClickCallback {
                                 val vibrant = palette?.vibrantSwatch
                                 val mutedColor = palette?.vibrantSwatch?.rgb
                                 if (vibrant != null) {
-                                    collapsing_toolbar.setStatusBarScrimColor(
-                                        palette.getDarkMutedColor(
-                                            mutedColor ?: R.color.colorAccent
-                                        )
-                                    )
-                                    collapsing_toolbar.setContentScrimColor(
-                                        palette.getMutedColor(
-                                            mutedColor ?: R.color.colorPrimary
-                                        )
-                                    )
+                                    collapsing_toolbar.setStatusBarScrimColor(palette.getDarkMutedColor(mutedColor ?: R.color.colorAccent))
+                                    details_screen_root.setBackgroundColor(vibrant.rgb)
+                                    collapsing_toolbar.setContentScrimColor(palette.getMutedColor(mutedColor ?: R.color.colorPrimary))
                                 }
-
                             }
                     }
                     return false
