@@ -27,7 +27,7 @@ interface BaseMedia {
 
     fun voteAvrg(): Double
 
-    fun relaeseDate(): String
+    fun releaseDate(): String
 
     fun overView(): String
 }

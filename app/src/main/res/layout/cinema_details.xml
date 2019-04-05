@@ -25,14 +25,16 @@
             android:layout_marginStart="8dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/cinema_genre"/>
+            android:id="@+id/cinema_genre"
+            style="@style/Text_Title"
+            />
 
     <TextView
             app:layout_constraintStart_toEndOf="@id/cinema_poster"
             app:layout_constraintBottom_toTopOf="@+id/cinema_runtime"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cinema_genre"
-
+            style="@style/Text_Title"
             android:layout_marginStart="8dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -44,7 +46,7 @@
             app:layout_constraintTop_toBottomOf="@id/cinema_votes"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/cinema_release_date"
-
+            style="@style/Text_Title"
             android:layout_marginStart="8dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,7 +58,7 @@
             app:layout_constraintTop_toBottomOf="@id/cinema_runtime"
             app:layout_constraintBottom_toBottomOf="@+id/cinema_poster"
             app:layout_constraintEnd_toEndOf="parent"
-
+            style="@style/Text_Title"
             android:layout_marginStart="8dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -68,35 +70,27 @@
             app:layout_constraintTop_toBottomOf="@id/cinema_poster"
             android:visibility="gone"
             android:layout_marginStart="8dp"
+            style="@style/Text_Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/cinema_homepage_heading"/>
 
     <TextView
-            android:text="TextView7"
-            android:id="@+id/cinema_homepage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cinema_homepage_heading"
-            android:visibility="gone"
-            android:layout_marginStart="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    <TextView
             android:text="Storyline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cinema_homepage"
-
+            app:layout_constraintTop_toBottomOf="@id/cinema_homepage_heading"
             android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            style="@style/Text_Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/cinema_storyline_header"/>
 
     <TextView
-            android:text="TextView9"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cinema_storyline_header"
-
+            style="@style/Text_Sub_Title"
             android:layout_marginStart="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -112,6 +106,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            style="@style/Text_Title"
             app:layout_constraintTop_toBottomOf="@+id/cinema_storyline"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -142,6 +137,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recycler_view_images"
             android:layout_marginEnd="8dp"
+            style="@style/Text_Title"
             android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"/>
 
@@ -163,5 +159,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cinema_videos_heading"
             app:layout_constraintBottom_toBottomOf="@+id/recycler_view_videos"
             android:layout_height="wrap_content"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

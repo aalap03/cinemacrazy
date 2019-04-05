@@ -10,6 +10,7 @@
 
         <item name="android:windowContentTransitions">true</item>
         <item name="android:textViewStyle">@style/cinema_text</item>
+
     </style>
 
     <style name="cinema_text" parent="android:Widget.TextView">
@@ -23,6 +24,18 @@
 
     <style name="title_style_collapsed">
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="Text_Title" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="Text_Sub_Title" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
     </style>
 
 </resources>

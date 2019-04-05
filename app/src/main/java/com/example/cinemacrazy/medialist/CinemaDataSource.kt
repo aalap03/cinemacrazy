@@ -95,10 +95,10 @@ class CinemaDataSource(
         }
             .subscribe({ t ->
                 initialCallback?.let {
-                    it.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, null, 2)
+                    it.onResult(t.sortedBy { baseMedia -> baseMedia.releaseDate() }, null, 2)
                     initialLoading.postValue(false)
                 }
-                afterCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.relaeseDate() }, pageNum + 1)
+                afterCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.releaseDate() }, pageNum + 1)
             }, { t ->
                 t.printStackTrace()
                 initialCallback?.let {

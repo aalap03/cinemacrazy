@@ -86,7 +86,7 @@ data class TrendingTv(
         return voteAvrg
     }
 
-    override fun relaeseDate(): String {
+    override fun releaseDate(): String {
         return firstAirDate
     }
 

@@ -90,7 +90,7 @@ data class TrendingMovie(
         return voteAverage
     }
 
-    override fun relaeseDate(): String {
+    override fun releaseDate(): String {
         return releaseDate
     }
 
