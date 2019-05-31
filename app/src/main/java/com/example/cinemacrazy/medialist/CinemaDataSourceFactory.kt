@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import com.example.cinemacrazy.apiservice.TmdbService
 import com.example.cinemacrazy.datamodel.serverResponses.cinemaResponses.BaseMedia
+import org.jetbrains.anko.error
 
 class CinemaDataSourceFactory(var api: TmdbService,
                               mediaType: String,
@@ -19,6 +20,14 @@ class CinemaDataSourceFactory(var api: TmdbService,
     }
     fun clear() {
         mediaDataSource.clear()
+    }
+
+    fun getEmptyState(): MutableLiveData<Boolean> {
+        return mediaDataSource.emptyState
+    }
+
+    fun getErrorMsg(): MutableLiveData<String> {
+        return mediaDataSource.errorMessage
     }
 
 }

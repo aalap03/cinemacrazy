@@ -23,17 +23,18 @@ class CinemaDataSource(
     PageKeyedDataSource<Long, BaseMedia>(),
     AnkoLogger {
 
-    private var compositeDisposable: CompositeDisposable = CompositeDisposable()
+    var emptyState = MutableLiveData<Boolean>()
+    var errorMessage = MutableLiveData<String>()
+
     var initialLoading = MutableLiveData<Boolean>()
+    private var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun loadInitial(params: LoadInitialParams<Long>, callback: LoadInitialCallback<Long, BaseMedia>) {
-        info { "load:Initial $mediaType->$cinemaListType" }
         initialLoading.postValue(true)
         getBaseMediaResponse(api, 1, callback, null)
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<Long, BaseMedia>) {
-        info { "load:After $mediaType->$cinemaListType" }
         getBaseMediaResponse(api, params.key, initialCallback = null, afterCallback = callback)
     }
 
@@ -94,17 +95,20 @@ class CinemaDataSource(
             }
         }
             .subscribe({ t ->
+
                 initialCallback?.let {
                     it.onResult(t.sortedBy { baseMedia -> baseMedia.releaseDate() }, null, 2)
                     initialLoading.postValue(false)
+                    emptyState.postValue(t.isEmpty())
                 }
+
+
                 afterCallback?.onResult(t.sortedBy { baseMedia -> baseMedia.releaseDate() }, pageNum + 1)
+
             }, { t ->
                 t.printStackTrace()
-                initialCallback?.let {
-                    initialLoading.postValue(false)
-                }
-                info { "onError: ${t.localizedMessage}" }
+                initialCallback?.let { initialLoading.postValue(false) }
+                errorMessage.postValue(t.localizedMessage)
             })
         )
 

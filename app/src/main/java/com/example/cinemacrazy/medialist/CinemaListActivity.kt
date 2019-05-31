@@ -3,7 +3,9 @@ package com.example.cinemacrazy.medialist
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
@@ -55,6 +57,8 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
         viewmodel = ViewModelProviders.of(this).get(CinemaViewModel::class.java)
         displayLiveMedia(null)
         viewmodel.initialLoading().observe(this, Observer { progress.visibility = if (it) View.VISIBLE else View.GONE })
+        viewmodel.getEmptyState().observe(this, Observer { empty_view_text.visibility = if(it) View.VISIBLE else View.GONE })
+        viewmodel.getErrorMessage().observe(this, Observer { Toast.makeText(this, it, Toast.LENGTH_SHORT).show() })
 
         supportActionBar?.title = getToolbarTitle()
     }
@@ -179,7 +183,7 @@ class CinemaListActivity : BaseActivity(), AnkoLogger {
     private fun getToolbarTitle(): CharSequence? {
         val cinemaListTye = when (CINEMA_LIST_TYPE) {
             API_CINEMALIST_POPULAR -> getString(R.string.movie_popular)
-            API_CINEMALIST_TRENDING -> getString(R.string.movie_trending)
+            API_CINEMALIST_TRENDING -> getString(R.string.trending)
             API_CINEMALIST_TOP_RATED -> getString(R.string.movie_top_rated)
             API_MOVIE_CINEMALIST_NOW_PLAYING -> getString(R.string.movie_now_playing)
             API_MOVIE_CINEMALIST_UPCOMING -> getString(R.string.movie_upcoming)

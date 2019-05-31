@@ -6,6 +6,9 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+def credentialFile = rootProject.file("credentials.properties")
+def credentialProperty = new Properties()
+credentialProperty.load(new FileInputStream(credentialFile))
 
 android {
     compileSdkVersion 28
@@ -17,7 +20,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "TMDB_API_KEY", "\"70ca97bc3cbdc59a4577ea0dbeb9da00\""
+        buildConfigField "String", "TMDB_API_KEY", credentialProperty['TMDB_API_KEY']
         buildConfigField "String", "BASE_TMDB_API", "\"https://api.themoviedb.org/3/\""
 
     }

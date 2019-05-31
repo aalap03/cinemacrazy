@@ -6,6 +6,7 @@
     <string name="movie_now_playing">Now Playing</string>
     <string name="movie_top_rated">Top Rated</string>
     <string name="movie_popular">Popular</string>
+    <string name="trending">Trending</string>
 
     <string name="tv_trending">Trending TV Series</string>
     <string name="tv_airing_today">Airing Today</string>

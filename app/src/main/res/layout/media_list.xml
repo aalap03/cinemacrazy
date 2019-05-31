@@ -8,6 +8,17 @@
         android:layout_height="match_parent"
         tools:context=".medialist.CinemaListActivity">
 
+    <TextView
+            android:text="Not Found.!!!"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/empty_view_text"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/recycler_view"
+            app:layout_constraintTop_toTopOf="@+id/cinema_list_toolbar"/>
+
     <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -21,13 +32,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_height="0dp"/>
 
-
     <ProgressBar
             android:layout_width="wrap_content"
             android:id="@+id/progress"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

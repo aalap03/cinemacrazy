@@ -30,6 +30,15 @@ class CinemaViewModel : ViewModel() {
     fun initialLoading(): MutableLiveData<Boolean> {
         return factory.initialLoading()
     }
+
+    fun getEmptyState(): MutableLiveData<Boolean>{
+        return factory.getEmptyState()
+    }
+
+    fun getErrorMessage(): MutableLiveData<String>{
+        return factory.getErrorMsg()
+    }
+
     private fun clearPreviousRequest() {
         factory.clear()
     }

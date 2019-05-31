@@ -242,12 +242,11 @@ class CinemaDetailScreen : BaseActivity(), AnkoLogger, MediaClickCallback {
     }
 
     private fun watchYoutubeVideo(id: String) {
-
         val appIntent = Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id"))
-        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
         try {
             startActivity(appIntent)
         } catch (ex: ActivityNotFoundException) {
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
             startActivity(webIntent)
         }
     }

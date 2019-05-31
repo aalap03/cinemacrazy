@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.cinema_image_screen.*
 
 class ImageScreen : AppCompatActivity() {
 
-    var totalSize = 0
+    private var totalSize = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
